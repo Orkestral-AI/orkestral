@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+// bin/orkestral — escolhe o runtime conforme o ambiente:
+//
+//   1. Electron presente (checkout dev / imagem antiga): spawna `electron out/main/cli.js`.
+//      NÃO usa ELECTRON_RUN_AS_NODE: sob RUN_AS_NODE o `import { BrowserWindow } from
+//      'electron'` do bundle não tem export nomeado e quebra. Como runtime, a API existe
+//      e o ABI do better-sqlite3 (rebuildado pro Electron pelo postinstall dev) casa.
+//   2. Electron ausente (`npm i -g orkestral`, Docker/VPS Node puro): importa o cli.js
+//      direto neste processo Node. Os addons nativos foram compilados pro ABI do Node
+//      no install (o postinstall só rebuilda pro Electron quando electron-builder existe).
+//
+// ORKESTRAL_FORCE_NODE=1 força o caminho Node puro mesmo com Electron instalado
+// (útil em bare-metal que buildou com devDeps e depois rebuildou os nativos pro Node).
+//
+// Sintaxe ESM: o package.json tem "type":"module" — `require`/`__dirname` CJS quebram.
+import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const binDir = dirname(fileURLToPath(import.meta.url));
+const cliEntry = join(binDir, '..', 'out', 'main', 'cli.js');
+
+function resolveElectron() {
+  if (process.env.ORKESTRAL_FORCE_NODE === '1') return null;
+  try {
+    const require = createRequire(import.meta.url);
+    return require('electron'); // resolve pro caminho do binário do Electron
+  } catch {
+    return null; // instalação Node pura (npm -g / --omit=dev)
+  }
+}
+
+const electron = resolveElectron();
+if (electron) {
+  const res = spawnSync(electron, [cliEntry, ...process.argv.slice(2)], { stdio: 'inherit' });
+  process.exit(res.status ?? 0);
+} else {
+  await import(pathToFileURL(cliEntry).href);
+}

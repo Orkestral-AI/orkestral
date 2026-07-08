@@ -1,0 +1,272 @@
+{
+  "name": "orkestral",
+  "productName": "Orkestral",
+  "version": "0.4.0",
+  "description": "An agent company on your computer — local-first AI dev orchestration. / Uma empresa de agentes no seu computador.",
+  "main": "./out/main/index.js",
+  "bin": {
+    "orkestral": "bin/orkestral"
+  },
+  "files": [
+    "bin",
+    "out",
+    "!out/__*",
+    "!out/**/*.test.*",
+    "scripts/postinstall.mjs"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "author": "Filipe Borelli",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Orkestral-AI/orkestral.git"
+  },
+  "homepage": "https://orkestral.pro",
+  "bugs": {
+    "url": "https://github.com/Orkestral-AI/orkestral/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "agent-orchestration",
+    "electron",
+    "local-first",
+    "desktop-app",
+    "code-generation",
+    "developer-tools",
+    "llm"
+  ],
+  "scripts": {
+    "predev": "npm run setup:models",
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "cli": "electron out/main/cli.js",
+    "setup:embeddings": "node scripts/setup-embeddings.mjs",
+    "setup:models": "npm run setup:embeddings",
+    "build": "npm run setup:models && npm run typecheck && electron-vite build",
+    "dist:mac": "npm run build && electron-builder --mac --publish never",
+    "dist:mac:arm": "npm run build && electron-builder --mac --arm64 --publish never",
+    "dist:mac:x64": "npm run build && electron-builder --mac --x64 --publish never",
+    "dist:mac:signed": "npm run build && electron-builder --mac -c.mac.hardenedRuntime=true -c.mac.gatekeeperAssess=false -c.mac.entitlements=build/entitlements.mac.plist -c.mac.entitlementsInherit=build/entitlements.mac.plist --publish never",
+    "dist:win": "npm run build && electron-builder --win --publish never",
+    "dist:linux": "npm run build && electron-builder --linux --publish never",
+    "dist:all": "npm run build && electron-builder -mwl --publish never",
+    "dist:dir": "npm run build && electron-builder --dir",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "test": "vitest run",
+    "lint": "eslint --cache .",
+    "format": "prettier --write .",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "prepack": "npm run typecheck && electron-vite build",
+    "postinstall": "node scripts/postinstall.mjs"
+  },
+  "build": {
+    "appId": "com.orkestral.app",
+    "productName": "Orkestral",
+    "afterSign": "build/notarize.cjs",
+    "protocols": [
+      {
+        "name": "Orkestral",
+        "schemes": [
+          "orkestral"
+        ]
+      }
+    ],
+    "icon": "resources/icon.png",
+    "mac": {
+      "icon": "resources/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.developer-tools",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "icon": "resources/icon.icns",
+      "iconSize": 110,
+      "background": "resources/dmg-background.png",
+      "title": "${productName} ${version}",
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "contents": [
+        {
+          "x": 150,
+          "y": 250,
+          "type": "file"
+        },
+        {
+          "x": 390,
+          "y": 250,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "icon": "resources/icon.ico",
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "linux": {
+      "icon": "resources/icon.png",
+      "category": "Development",
+      "maintainer": "Orkestral AI <contato@orkestral.app>",
+      "synopsis": "Deck operacional de desenvolvimento com IA",
+      "target": [
+        "AppImage"
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "directories": {
+      "output": "dist",
+      "buildResources": "resources"
+    },
+    "files": [
+      "out/**/*",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/*.node",
+      "node_modules/node-llama-cpp/bins/**/*",
+      "node_modules/@node-llama-cpp/**/*",
+      "node_modules/ffmpeg-static/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": [
+          "**/*",
+          "!embeddings/models/*.gguf"
+        ]
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "Orkestral-AI",
+      "repo": "orkestral",
+      "releaseType": "release"
+    }
+  },
+  "dependencies": {
+    "@blocknote/core": "^0.47.3",
+    "@blocknote/mantine": "^0.47.3",
+    "@blocknote/react": "^0.47.3",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-go": "^6.0.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/lang-java": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/lang-php": "^6.0.2",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/lang-rust": "^6.0.2",
+    "@codemirror/lang-sql": "^6.10.0",
+    "@codemirror/lang-vue": "^0.1.3",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/lang-yaml": "^6.1.3",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/legacy-modes": "^6.5.3",
+    "@codemirror/search": "^6.7.1",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.43.1",
+    "@dicebear/collection": "^9.4.2",
+    "@dicebear/core": "^9.4.2",
+    "@lezer/highlight": "^1.2.3",
+    "@microsoft/teams.api": "^2.0.12",
+    "@microsoft/teams.apps": "^2.0.12",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-popover": "^1.1.2",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.1",
+    "@radix-ui/react-tooltip": "^1.1.4",
+    "@tanstack/react-query": "^5.59.20",
+    "@uiw/react-codemirror": "^4.25.10",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-web-links": "^0.12.0",
+    "@xterm/xterm": "^6.0.0",
+    "baileys": "^7.0.0-rc.13",
+    "better-sqlite3": "^12.9.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "commander": "^15.0.0",
+    "discord.js": "^14.26.4",
+    "dockerode": "^5.0.0",
+    "drizzle-orm": "^0.36.0",
+    "electron-updater": "^6.8.9",
+    "express": "^5.2.1",
+    "ffmpeg-static": "^5.3.0",
+    "framer-motion": "^12.0.0",
+    "grammy": "^1.44.0",
+    "ink": "^7.1.0",
+    "jose": "^5.10.0",
+    "lucide-react": "^0.460.0",
+    "node-llama-cpp": "^3.18.1",
+    "node-pty": "^1.1.0",
+    "prism-react-renderer": "^2.4.1",
+    "prismjs": "^1.30.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.1.0",
+    "remark-gfm": "^4.0.1",
+    "smart-whisper": "^0.8.1",
+    "tailwind-merge": "^3.0.0",
+    "typescript": "^5.7.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "^3.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.1.0",
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@electron/notarize": "^3.1.1",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/dockerode": "^4.0.1",
+    "@types/node": "^22.10.0",
+    "@types/prismjs": "^1.26.6",
+    "@types/qrcode": "^1.5.6",
+    "@types/qrcode-terminal": "^0.12.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "drizzle-kit": "^0.30.0",
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.0",
+    "electron-vite": "^5.0.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^7.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "material-icon-theme": "^5.35.0",
+    "prettier": "^3.4.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^7.0.0",
+    "vitest": "^4.1.8"
+  }
+}

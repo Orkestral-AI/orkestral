@@ -1,0 +1,883 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import 'tailwindcss';
+
+/* AI SDK Elements — shimmer de texto pro estado "pensando/trabalhando". */
+@keyframes ai-shimmer-text {
+  0% {
+    background-position: 150% center;
+  }
+  100% {
+    background-position: -50% center;
+  }
+}
+.ai-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-text-faint, #52525b) 0%,
+    var(--color-text-faint, #52525b) 35%,
+    var(--color-text-primary, #f4f4f5) 50%,
+    var(--color-text-faint, #52525b) 65%,
+    var(--color-text-faint, #52525b) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: ai-shimmer-text 2.2s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-shimmer {
+    animation: none;
+    color: var(--color-text-secondary, #a1a1aa);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/* Fontes — Inter (sans) e JetBrains Mono (mono) via Google Fonts.
+ * Self-host pode ser adicionado depois para offline-first. */
+
+/* ----------------------------------------------------------------------------
+ * Design tokens — paleta e tipografia do doc 18.
+ * Acessar em CSS via var(--color-*) ou no Tailwind via classes geradas
+ * automaticamente pelo plugin @theme (ex: bg-background, text-text-primary).
+ * -------------------------------------------------------------------------- */
+@theme {
+  /* Cores base — dark é o tema padrão.
+   * O tema light é definido logo abaixo, sobrescrevendo essas vars em [data-theme="light"]. */
+  --color-sidebar: #0e0f10; /* sidebar + faixa externa do card inset */
+  --color-background: #111213; /* card de conteúdo (área principal) */
+  --color-rail: #0f1011; /* rail/coluna lateral DENTRO do conteúdo: ~10% mais escuro que o
+                            background (não um cinza/overlay) — ex.: rail de insights dos Logs */
+  --color-rail-card: #131517; /* card sobre o rail: um tom abaixo do surface, ainda acima do
+                                 rail/background (destaca sem clarear demais) */
+  --color-card: #121314; /* card de conteúdo principal (ex.: cards da aba Configuração): MESMA
+                            proporção de cor do --color-background (sem azul/indigo extra), só
+                            ~1 tom acima — "o fundo levemente elevado", neutro e escuro */
+  --color-surface: #16181a; /* popover, dialog, card menor */
+  --color-surface-elevated: #1c1e21; /* inputs, badges, botões secundários */
+  --color-border: #24262a;
+  --color-border-strong: #2f3236;
+
+  /* Texto */
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-faint: #52525b;
+
+  /* Acentos */
+  /* Acento SÓLIDO da marca — usado em badges/pills/botões de fundo cheio com
+   * texto branco (ex.: SidebarBadge). É o token único que define "a cor roxa do
+   * app". Por padrão #6d28d9 (idêntico ao hex hardcoded de hoje), então o visual
+   * default não muda. Cada hue de data-accent remapeia este token. */
+  --color-accent: #6d28d9;
+  /* Acento CLARO — tints/ícones/destaques sutis (text-accent-purple, bg-accent-purple/10). */
+  --color-accent-purple: #a78bfa;
+  --color-accent-blue: #3b82f6;
+  --color-accent-green: #22c55e;
+  --color-accent-yellow: #eab308;
+  --color-accent-red: #f87171;
+  --color-accent-orange: #fb923c;
+  /* Acento CIANO — usado só no badge "embed" do trace de Logs (o app não tinha ciano). */
+  --color-accent-cyan: #4cd1c0;
+
+  /* Status de issues (doc 09) */
+  --color-status-backlog: #71717a;
+  --color-status-todo: #a1a1aa;
+  --color-status-in-progress: #3b82f6;
+  --color-status-in-review: #a78bfa;
+  --color-status-blocked: #f87171;
+  --color-status-done: #22c55e;
+  --color-status-cancelled: #52525b;
+
+  /* Prioridades (doc 09) */
+  --color-priority-critical: #f87171;
+  --color-priority-high: #fb923c;
+  --color-priority-medium: #eab308;
+  --color-priority-low: #71717a;
+
+  /* Tipografia */
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Radius — bordas suaves */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Overlays neutros tematizáveis — os defaults (dark) são BYTE-IDÊNTICOS aos
+   * valores `white/[0.0x]` usados hoje na chrome, então o tema escuro não muda
+   * em nada. No tema light (mais abaixo) viram tons de preto pra aparecerem
+   * sobre fundo claro. Gera utilitários: border-hairline, bg-surface-1, etc. */
+  --color-hairline: rgba(255, 255, 255, 0.06); /* bordas/divisórias (== white/[0.06]) */
+  --color-hairline-soft: rgba(255, 255, 255, 0.04); /* bordas/divisórias sutis (== white/[0.04]) */
+  --color-hairline-strong: rgba(255, 255, 255, 0.08); /* borda de dialog (== white/[0.08]) */
+  --color-surface-1: rgba(
+    255,
+    255,
+    255,
+    0.04
+  ); /* superfície/preenchimento sutil + hover (== white/[0.04]) */
+  --color-surface-hover: rgba(255, 255, 255, 0.03); /* hover mais leve (== white/[0.03]) */
+  --color-surface-active: rgba(255, 255, 255, 0.06); /* item ativo/selecionado (== white/[0.06]) */
+  --color-surface-faint: rgba(255, 255, 255, 0.02); /* preenchimento bem sutil (== white/[0.02]) */
+  --color-surface-subtle: rgba(
+    255,
+    255,
+    255,
+    0.025
+  ); /* preenchimento sutil de superfície (== white/[0.025]) */
+  --color-surface-2: rgba(
+    255,
+    255,
+    255,
+    0.05
+  ); /* superfície elevada translúcida (== white/[0.05]) */
+  --color-surface-strong: rgba(255, 255, 255, 0.08); /* superfície de destaque (== white/[0.08]) */
+  --color-hairline-faint: rgba(
+    255,
+    255,
+    255,
+    0.05
+  ); /* divisória entre soft e padrão (== white/[0.05]) */
+  --color-hairline-med: rgba(
+    255,
+    255,
+    255,
+    0.07
+  ); /* divisória de médio contraste (== white/[0.07]) */
+  --color-hairline-heavy: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* divisória de alto contraste (== white/[0.1]) */
+  --color-hairline-ghost: rgba(
+    255,
+    255,
+    255,
+    0.03
+  ); /* divisória fantasma, abaixo de soft (== white/[0.03]) */
+  --color-hairline-vivid: rgba(255, 255, 255, 0.12); /* divisória vívida (== white/[0.12]) */
+  --color-hairline-bright: rgba(255, 255, 255, 0.14); /* divisória brilhante (== white/[0.14]) */
+  --color-hairline-intense: rgba(255, 255, 255, 0.15); /* divisória intensa (== white/[0.15]) */
+  --color-hairline-mega: rgba(
+    255,
+    255,
+    255,
+    0.16
+  ); /* divisória de seleção/hover forte (== white/[0.16]) */
+  --color-hairline-ultra: rgba(
+    255,
+    255,
+    255,
+    0.18
+  ); /* divisória de máximo contraste (== white/[0.18]) */
+
+  /* Superfícies/preenchimentos MUITO sutis — abaixo de surface-faint(.02). Dark
+   * byte-idêntico ao white/[0.0x] de hoje; light = preto translúcido espelhado. */
+  --color-surface-ghost: rgba(255, 255, 255, 0.01); /* preenchimento fantasma (== white/[0.01]) */
+  --color-surface-whisper: rgba(
+    255,
+    255,
+    255,
+    0.012
+  ); /* preenchimento quase imperceptível (== white/[0.012]) */
+  --color-surface-veil: rgba(255, 255, 255, 0.015); /* preenchimento véu (== white/[0.015]) */
+  --color-surface-3: rgba(
+    255,
+    255,
+    255,
+    0.035
+  ); /* superfície entre subtle e surface-1 (== white/[0.035]) */
+  --color-surface-4: rgba(255, 255, 255, 0.07); /* superfície de hover forte (== white/[0.07]) */
+  --color-surface-5: rgba(255, 255, 255, 0.14); /* superfície bem forte (== white/[0.14]) */
+  --color-surface-6: rgba(255, 255, 255, 0.1); /* superfície de hover intenso (== white/[0.1]) */
+
+  /* Fundo do dialog/modal — hoje hardcoded como #1B1C1E no DialogContent.
+   * Vira token pra acompanhar o tema (claro no light). Dark idêntico. */
+  --color-dialog: #1b1c1e;
+
+  /* Inputs / selects / textareas — tokens tematizáveis pra terem fundo e borda
+   * VISÍVEIS em ambos os temas. Os defaults (dark) são BYTE-IDÊNTICOS aos
+   * valores `white/[0.0x]` usados hoje nos triggers/inputs, então o dark não
+   * muda. No light (mais abaixo) viram branco sólido + borda preta sutil pra
+   * não sumirem sobre fundo claro. O foco usa uma borda branca discreta (dark);
+   * no light vira o acento. */
+  --color-input-bg: rgba(255, 255, 255, 0.025); /* == bg-white/[0.025] de hoje */
+  --color-input-border: rgba(255, 255, 255, 0.08); /* == border-white/[0.08] de hoje */
+  --color-input-border-focus: rgba(255, 255, 255, 0.2); /* == focus:border-white/20 de hoje */
+
+  /* Track do switch DESLIGADO — visível sobre fundo claro. Dark idêntico ao
+   * surface-elevated atual. Ligado continua acento/azul. */
+  --color-switch-off: #1c1e21; /* == --color-surface-elevated (dark) */
+}
+
+/* ----------------------------------------------------------------------------
+ * Tema light — sobrescreve as vars do @theme quando [data-theme="light"] está
+ * presente no <html>. Por padrão o app inicia em dark.
+ * Aplicado em <html data-theme="light"> (ver renderer/src/main.tsx ou store de UI).
+ * -------------------------------------------------------------------------- */
+[data-theme='light'] {
+  /* Paleta clara SUAVE (estilo Linear/Notion) — off-white de fundo, branco
+   * levemente elevado pro card/conteúdo, sidebar um tom à parte pra separação.
+   * Nada de #fff puro como fundo geral (estoura/cansa a vista). */
+  --color-sidebar: #f0f0f2; /* sidebar — separada do bg por meio tom + hairline */
+  --color-background: #fcfcfd; /* card de conteúdo (área principal), levemente elevado */
+  --color-rail: #f1f1f4; /* rail dentro do conteúdo: um meio-tom abaixo do background (light) */
+  --color-rail-card: #fbfbfd; /* card sobre o rail (light): levemente elevado do rail */
+  --color-card: #f6f6f8; /* card de conteúdo principal (light): meio-tom abaixo do background */
+  --color-surface: #ffffff; /* popover/dialog/card menor — o branco mais alto */
+  --color-surface-elevated: #f1f1f3; /* inputs/badges/botões secundários */
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-strong: rgba(0, 0, 0, 0.16);
+
+  --color-text-primary: #1a1a1e;
+  --color-text-secondary: #4a4a52;
+  --color-text-muted: #73737d;
+  --color-text-faint: #a0a0aa;
+
+  /* Overlays neutros — viram tons de PRETO pra terem contraste sobre o fundo
+   * claro (no dark eram tons de branco). Mantém a mesma hierarquia visual, só
+   * que mais suave pra não "sujar" o branco. */
+  --color-hairline: rgba(0, 0, 0, 0.08);
+  --color-hairline-soft: rgba(0, 0, 0, 0.05);
+  --color-hairline-strong: rgba(0, 0, 0, 0.12);
+  --color-surface-1: rgba(0, 0, 0, 0.03);
+  --color-surface-hover: rgba(0, 0, 0, 0.04);
+  --color-surface-active: rgba(0, 0, 0, 0.06);
+  --color-surface-faint: rgba(0, 0, 0, 0.02);
+  --color-surface-subtle: rgba(0, 0, 0, 0.025);
+  --color-surface-2: rgba(0, 0, 0, 0.05);
+  --color-surface-strong: rgba(0, 0, 0, 0.07);
+  --color-hairline-faint: rgba(0, 0, 0, 0.06);
+  --color-hairline-med: rgba(0, 0, 0, 0.09);
+  --color-hairline-heavy: rgba(0, 0, 0, 0.12);
+  --color-hairline-ghost: rgba(0, 0, 0, 0.04);
+  --color-hairline-vivid: rgba(0, 0, 0, 0.1);
+  --color-hairline-bright: rgba(0, 0, 0, 0.12);
+  --color-hairline-intense: rgba(0, 0, 0, 0.13);
+  --color-hairline-mega: rgba(0, 0, 0, 0.14);
+  --color-hairline-ultra: rgba(0, 0, 0, 0.16);
+
+  --color-surface-ghost: rgba(0, 0, 0, 0.012);
+  --color-surface-whisper: rgba(0, 0, 0, 0.015);
+  --color-surface-veil: rgba(0, 0, 0, 0.018);
+  --color-surface-3: rgba(0, 0, 0, 0.035);
+  --color-surface-4: rgba(0, 0, 0, 0.06);
+  --color-surface-5: rgba(0, 0, 0, 0.12);
+  --color-surface-6: rgba(0, 0, 0, 0.09);
+
+  /* Dialog/modal claro. */
+  --color-dialog: #ffffff;
+
+  /* Inputs no light — branco SÓLIDO com borda preta sutil pra aparecerem sobre
+   * o fundo claro (no dark eram tons de branco translúcido que sumiam). O foco
+   * usa o acento pra dar feedback claro. */
+  --color-input-bg: #ffffff;
+  --color-input-border: rgba(0, 0, 0, 0.14);
+  --color-input-border-focus: var(--color-accent);
+
+  /* Track do switch desligado — cinza claro visível sobre branco. */
+  --color-switch-off: #d4d4d8;
+
+  /* Acento sólido um tom mais escuro no light pra texto branco continuar legível
+   * sobre ele e o roxo não "estourar" num fundo claro. */
+  --color-accent: #6d28d9;
+  --color-accent-purple: #7c3aed;
+}
+
+/* ----------------------------------------------------------------------------
+ * Configurações de aparência aplicadas em runtime (data-attrs no <html>).
+ * Setadas pelo settingsStore (applyAppearance). SEM atributo = visual padrão
+ * (roxo, fonte média, confortável) idêntico ao de hoje.
+ * -------------------------------------------------------------------------- */
+
+/* Cor de destaque — remapeia OS DOIS tokens de acento de uma vez:
+ *  - `--color-accent`        = tom SÓLIDO (badges/pills/botões de fundo cheio
+ *                              com texto branco; classes bg-accent / text-accent).
+ *  - `--color-accent-purple` = tom CLARO (ícones/tints sutis; bg-accent-purple/10,
+ *                              text-accent-purple, dots).
+ * Trocar só estes dois recolore TODOS os destaques de forma consistente sem
+ * mexer em classe nenhuma. data-accent="purple" não existe (cai no default roxo
+ * do @theme: sólido #6d28d9 / claro #a78bfa). Os tons sólidos são escuros o
+ * suficiente pra texto branco continuar legível em qualquer hue. */
+/* Seletor SEM `html` de propósito: além do <html> (accent global = workspace
+ * ativo), o atributo pode ser setado em qualquer elemento pra escopar o accent
+ * num subárvore — ex.: o wizard de criar workspace pré-visualiza a cor que está
+ * sendo escolhida só dentro do modal. `purple` precisa de regra explícita pra
+ * RESETAR pro default quando o html herdado tem outro hue. */
+[data-accent='purple'] {
+  --color-accent: #6d28d9;
+  --color-accent-purple: #a78bfa;
+}
+[data-accent='blue'] {
+  --color-accent: #2563eb;
+  --color-accent-purple: #60a5fa;
+}
+[data-accent='green'] {
+  --color-accent: #059669;
+  --color-accent-purple: #34d399;
+}
+[data-accent='yellow'] {
+  --color-accent: #d97706;
+  --color-accent-purple: #facc15;
+}
+[data-accent='orange'] {
+  --color-accent: #ea580c;
+  --color-accent-purple: #fb923c;
+}
+[data-accent='red'] {
+  --color-accent: #e11d48;
+  --color-accent-purple: #f87171;
+}
+
+/* Tamanho de fonte — escala a base do body (default 14px). Só afeta texto. */
+html[data-font-size='sm'] body {
+  font-size: 13px;
+}
+html[data-font-size='lg'] body {
+  font-size: 15px;
+}
+
+/* Densidade — token de respiro lido pelos painéis de configuração
+ * (PanelShell). Compacto reduz o gap vertical entre seções. */
+html {
+  --density-gap: 1.5rem;
+}
+html[data-density='compact'] {
+  --density-gap: 1rem;
+}
+
+/* Chat extra-largo — alarga a coluna do chat. As containers do chat ganham a
+ * classe `.chat-width-col` (junto do max-w-3xl que define o default de 48rem);
+ * quando ligado, abrimos pra 64rem. Escopado nessa classe pra NÃO afetar outros
+ * usos de max-w-3xl (onboarding, página de settings). */
+html[data-wide-chat='on'] .chat-width-col {
+  max-width: 64rem;
+}
+
+/* Quebra de linha em blocos de código (config de Aparência). Default (sem
+ * atributo ou 'on') = quebra; 'off' = rola na horizontal. Aplicado a TODO <pre>
+ * (blocos de código do chat/markdown usam <pre>), então pega sem tocar em JSX. */
+html[data-code-wrap='off'] pre {
+  white-space: pre;
+  overflow-x: auto;
+}
+html[data-code-wrap='on'] pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Logo "O" do Orkestral (OrkestralMark) — swap por tema. Default (dark): mostra a
+ * variante de polígonos claros; [data-theme='light']: mostra a de polígonos escuros. */
+.orkestral-o--light {
+  display: none;
+}
+[data-theme='light'] .orkestral-o--dark {
+  display: none;
+}
+[data-theme='light'] .orkestral-o--light {
+  display: inline-block;
+}
+
+/* ----------------------------------------------------------------------------
+ * Reset e estilos globais
+ * -------------------------------------------------------------------------- */
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--color-sidebar);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Cursor pointer SÓ em elementos realmente acionáveis — botões nativos do macOS
+ * vêm com default arrow, então forçamos pointer pra botões, links, menu items,
+ * selects, switches, tabs, checkboxes, summary. Disabled fica com not-allowed.
+ *
+ * IMPORTANTE: NÃO usar seletores genéricos por `[data-state]` aqui. O Radix
+ * marca `data-state="open"` no DialogContent e no DialogOverlay (e em popovers,
+ * selects, tabs, accordion…), então `[data-state='open'] { cursor: pointer }`
+ * fazia o MODAL INTEIRO (e seu fundo) virar pointer. Os triggers do Radix já
+ * são <button> ou têm [role], então continuam cobertos pelos seletores abaixo. */
+button:not(:disabled),
+a[href],
+summary,
+label,
+select,
+[role='button']:not([aria-disabled='true']),
+[role='link']:not([aria-disabled='true']),
+[role='menuitem']:not([aria-disabled='true']),
+[role='menuitemcheckbox']:not([aria-disabled='true']),
+[role='menuitemradio']:not([aria-disabled='true']),
+[role='option']:not([aria-disabled='true']),
+[role='tab']:not([aria-disabled='true']),
+[role='switch']:not([aria-disabled='true']),
+[role='checkbox']:not([aria-disabled='true']),
+[role='radio']:not([aria-disabled='true']),
+[role='combobox']:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+/* Inputs textuais devem ter caret normal — sobrescreve eventuais
+ * pointer herdados. */
+input:not([type='button']):not([type='submit']):not([type='checkbox']):not([type='radio']),
+textarea {
+  cursor: text;
+}
+
+::selection {
+  background: rgba(167, 139, 250, 0.35);
+  color: #fff;
+}
+
+/* Syntax highlighting do CodeBlock — paleta inspirada em One Dark.
+ * Aplicado via <span class="hl-X"> nos tokens. */
+.hl-keyword {
+  color: #c678dd;
+}
+.hl-string {
+  color: #98c379;
+}
+.hl-number {
+  color: #d19a66;
+}
+.hl-comment {
+  color: #5c6370;
+  font-style: italic;
+}
+.hl-func {
+  color: #61afef;
+}
+.hl-type {
+  color: #e5c07b;
+}
+.hl-var {
+  color: #e06c75;
+}
+
+/* Utilitário: esconde a barra de scroll mas mantém o scroll funcional.
+ * Uso: <div class="no-scrollbar overflow-y-auto"> */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
+  width: 0;
+  height: 0;
+}
+
+/* Scrollbar fininha e mais sutil — usada em listas estreitas (sidebar, etc.) */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  border: 0;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Scrollbar discreta no estilo macOS escuro */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Área onde o macOS desenha os traffic lights — reservar espaço pra não cobrir */
+.window-drag {
+  -webkit-app-region: drag;
+}
+.window-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Animação de pulso usada em LiveRunBadge e indicadores live */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------------------------
+ * Animações para componentes Radix (dialog, popover, tooltip, select, tabs).
+ *
+ * IMPORTANTE: o DialogContent usa as classes Tailwind `-translate-x-1/2 -translate-y-1/2`
+ * pra ficar centralizado. Animar `transform` via keyframe SOBRESCREVE esse translate
+ * e gera o bug "modal pulando da esquerda pro centro".
+ *
+ * Solução: animar apenas `opacity` e a CSS property `scale` (que é separada do `transform`
+ * nos browsers modernos e composa sem conflito). O translate continua via Tailwind.
+ * -------------------------------------------------------------------------- */
+
+/* Overlay do Dialog — só fade */
+[data-radix-dialog-overlay] {
+  transition: opacity 180ms ease-out;
+}
+[data-state='closed'][data-radix-dialog-overlay] {
+  opacity: 0;
+}
+[data-state='open'][data-radix-dialog-overlay] {
+  opacity: 1;
+}
+
+/* Conteúdo do Dialog — fade + scale via CSS property `scale` (não transform) */
+[data-radix-dialog-content] {
+  transition:
+    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    scale 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-state='closed'][data-radix-dialog-content] {
+  opacity: 0;
+  scale: 0.97;
+}
+[data-state='open'][data-radix-dialog-content] {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Popover / Select / Tooltip — usam `transform` mas sem translate fixo, scale OK */
+[data-radix-popper-content-wrapper] > [data-state] {
+  transition:
+    opacity 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    scale 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: var(--radix-popper-transform-origin, center);
+}
+[data-state='closed'][data-radix-popper-content-wrapper] > [data-state],
+[data-radix-popper-content-wrapper] > [data-state='closed'] {
+  opacity: 0;
+  scale: 0.96;
+}
+
+/* Tooltip — entra/sai suave (fade + zoom ancorado no gatilho). Usa keyframes em
+ * vez de transition porque transition NÃO anima a entrada no mount (o tooltip
+ * apareceria instantâneo). O transform-origin vem do popper, então ele "cresce"
+ * a partir da borda colada no ícone. `transition: none` desliga a regra genérica
+ * acima só pra este conteúdo, deixando os keyframes no comando. */
+.tooltip-content[data-state] {
+  transition: none;
+  transform-origin: var(--radix-popper-transform-origin, center);
+}
+.tooltip-content[data-state='delayed-open'],
+.tooltip-content[data-state='instant-open'] {
+  animation: tooltip-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tooltip-content[data-state='closed'] {
+  animation: tooltip-out 130ms ease-in forwards;
+}
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes tooltip-out {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+/* ============================================================================
+ * BlockNote overrides — alinha o editor com nosso DS (sem bg fixo nos blocos,
+ * highlight sutil só no hover/foco, fontes do app).
+ * ============================================================================ */
+.kb-blocknote-wrapper .bn-container,
+.kb-blocknote-wrapper .bn-editor {
+  background: transparent !important;
+}
+
+/* Cada bloco — sem padding interno extra; bg transparente por padrão */
+.kb-blocknote-wrapper .bn-block-outer,
+.kb-blocknote-wrapper .bn-block,
+.kb-blocknote-wrapper .bn-block-content {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Highlight sutil só no hover do bloco (linha atual destacada) */
+.kb-blocknote-wrapper .bn-block-outer:hover > .bn-block > .bn-block-content {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: 4px;
+}
+
+/* Bloco com foco — um leve realce horizontal */
+.kb-blocknote-wrapper .bn-block-outer:has(.ProseMirror-focused) > .bn-block > .bn-block-content {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border-radius: 4px;
+}
+
+/* Tira o card/borda em torno do editor inteiro */
+.kb-blocknote-wrapper .ProseMirror {
+  padding: 0 !important;
+}
+
+/* Tipografia + cor base */
+.kb-blocknote-wrapper {
+  font-family: inherit;
+  color: var(--color-text-primary, #e8e8ec);
+}
+.kb-blocknote-wrapper [data-content-type='paragraph'],
+.kb-blocknote-wrapper [data-content-type='heading'] {
+  color: var(--color-text-primary, #e8e8ec);
+}
+
+/* Drag-handle e botão "+" mais discretos */
+.kb-blocknote-wrapper .bn-side-menu {
+  color: var(--color-text-faint, rgba(255, 255, 255, 0.3));
+  opacity: 0.7;
+}
+.kb-blocknote-wrapper .bn-side-menu:hover {
+  opacity: 1;
+}
+
+/* Inline code inline */
+.kb-blocknote-wrapper code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12.5px;
+}
+
+/* ============================================================================
+ * KB Galaxy — react-flow custom styling (controls + minimap minimalistas)
+ * ============================================================================ */
+
+/* Background neutro do app — sem gradiente roxo */
+.bg-galaxy {
+  background: var(--color-background, #0a0a0b);
+}
+
+/* Animação de rotação pro ring orbital do sol */
+@keyframes kb-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Controls (botões +/-/fit) — pílula com opacity */
+.kb-galaxy-controls {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(8px);
+  opacity: 0.7;
+  transition: opacity 160ms ease;
+}
+.kb-galaxy-controls:hover {
+  opacity: 1;
+}
+.kb-galaxy-controls button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  width: 26px !important;
+  height: 26px !important;
+}
+.kb-galaxy-controls button:last-child {
+  border-bottom: none !important;
+}
+.kb-galaxy-controls button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+.kb-galaxy-controls svg {
+  fill: currentColor !important;
+}
+
+/* MiniMap — sem borda preta, rounded, opacity sutil */
+.kb-galaxy-minimap {
+  border: none !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  opacity: 0.6;
+  transition: opacity 200ms ease;
+  overflow: hidden !important;
+  margin: 12px !important;
+  width: 180px !important;
+  height: 120px !important;
+}
+.kb-galaxy-minimap:hover {
+  opacity: 1;
+}
+.kb-galaxy-minimap svg {
+  border-radius: 10px;
+  background: transparent;
+}
+/* Máscara escura ao redor da viewport visível no minimap */
+.react-flow__minimap-mask {
+  fill: rgba(0, 0, 0, 0.55) !important;
+  stroke: none !important;
+}
+.react-flow__minimap-node {
+  stroke: none !important;
+}
+
+/* Esconde attribution mesmo se hideAttribution falhar */
+.react-flow__attribution {
+  display: none !important;
+}
+
+/* ----------------------------------------------------------------------------
+ * CodeMirror — widget de busca inline (Cmd+F dentro do editor), estilo VS Code.
+ * Card flutuante no canto superior direito, tokens do design system.
+ * -------------------------------------------------------------------------- */
+.cm-editor .cm-panels {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+}
+.cm-editor .cm-panels.cm-panels-top {
+  border-bottom: none;
+}
+.cm-editor .cm-panel.cm-search {
+  position: absolute;
+  right: 14px;
+  top: 8px;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: min(520px, calc(100% - 28px));
+  padding: 8px;
+  background: var(--color-dialog);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+}
+.cm-editor .cm-search .cm-textfield {
+  flex: 1 1 150px;
+  min-width: 140px;
+  background: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 5px 9px;
+  font-size: 12.5px;
+  outline: none;
+}
+.cm-editor .cm-search .cm-textfield:focus {
+  border-color: color-mix(in srgb, var(--color-accent-purple) 55%, transparent);
+}
+.cm-editor .cm-search .cm-button {
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 12px;
+  background-image: none;
+  text-transform: none;
+}
+.cm-editor .cm-search .cm-button:hover {
+  background: var(--color-surface-4);
+  color: var(--color-text-primary);
+}
+.cm-editor .cm-search label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+.cm-editor .cm-search label input {
+  accent-color: var(--color-accent-purple);
+}
+.cm-editor .cm-search [name='close'] {
+  position: static;
+  order: 99;
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-faint);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.cm-editor .cm-search [name='close']:hover {
+  background: var(--color-surface-4);
+  color: var(--color-text-primary);
+}

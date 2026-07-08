@@ -1,0 +1,17 @@
+{
+  "status": {
+    "backlog": "Backlog",
+    "todo": "Todo",
+    "in_progress": "In progress",
+    "in_review": "In review",
+    "blocked": "Blocked",
+    "done": "Done",
+    "cancelled": "Cancelled"
+  },
+  "priority": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "title": "Knowledge base",
+  "newPageTitle": "New page",
+  "untitled": "Untitled",
+  "pageNotFound": "Page not found",
+  "selectWorkspaceFirst": "Select a workspace first.",
+  "index": {
+    "subtitle": "The workspace's brain. Pages with hierarchy, wikilinks {wikilink}, BM25 search and binary indexing for agents.",
+    "createPage": "Create new page",
+    "empty": "No pages yet. Create the first one or analyze a source to populate it.",
+    "recentPages": "Recent pages"
+  },
+  "editor": {
+    "backlinksHeading": "Referenced by ({count})"
+  },
+  "coverage": {
+    "title": "Source coverage",
+    "description": "Track what was learned for each repo/folder and fix agent or KB gaps.",
+    "loading": "Loading knowledge coverage…",
+    "unclassified": "no role",
+    "pages": "{count} pages",
+    "autoPages": "{count} automatic",
+    "files": "{count} files",
+    "embeddings": "{current}/{total} embeddings",
+    "createAgent": "Create agent",
+    "analyze": "Reanalyze",
+    "agentCreated": "Agent created: {name}",
+    "agentCreateFailed": "Failed to create agent",
+    "health": {
+      "empty": "empty",
+      "indexing": "indexing",
+      "ready": "ready",
+      "failed": "failed",
+      "stale": "review"
+    }
+  },
+  "fineTuning": {
+    "title": "Fine-tuning readiness",
+    "loading": "Calculating dataset quality…",
+    "readiness": "readiness",
+    "usable": "usable",
+    "avgScore": "avg score",
+    "ignored": "ignored",
+    "total": "{count} total examples",
+    "approved": "{count} approved",
+    "exported": "{count} exported",
+    "undoInvalidated": "{count} invalidated by Undo",
+    "highQuality": "{count} high quality",
+    "weightTrainingAvailable": "weight training available",
+    "weightTrainingPending": "weight training pending",
+    "curate": "Curate examples",
+    "curationTitle": "Learning curation",
+    "curationDescription": "Approve only examples with real context, useful outcome, and correct source scope.",
+    "curationFailed": "Failed to curate example",
+    "loadingExamples": "Loading examples…",
+    "emptyCuration": "No learning examples recorded yet.",
+    "autoApproval": "Automatic approval",
+    "autoApprovalArmed": "active · score ≥ {score}",
+    "manualApproval": "manual",
+    "workspaceScope": "Workspace",
+    "expectedOutput": "Expected output",
+    "approve": "Approve",
+    "ignore": "Ignore",
+    "edit": "Edit",
+    "invalidated": "Undo",
+    "export": "Export dataset",
+    "exportedTitle": "Dataset exported",
+    "exportedBody": "{train} train · {validation} validation",
+    "exportFailed": "Failed to export dataset",
+    "statusLabel": {
+      "candidate": "candidate",
+      "approved": "approved",
+      "exported": "exported",
+      "ignored": "ignored"
+    },
+    "stage": {
+      "memory_learning": "memory/RAG learning",
+      "dataset_curation": "dataset curation",
+      "dataset_ready": "dataset ready",
+      "adapter_training_pending": "adapter/LoRA pending"
+    },
+    "status": {
+      "empty": "empty",
+      "collecting": "collecting",
+      "curate": "curation",
+      "ready_to_export": "ready to export",
+      "ready_to_train": "ready to train"
+    }
+  },
+  "rag": {
+    "title": "RAG quality",
+    "description": "Benchmark approved feedback to measure whether retrieval finds the right pages.",
+    "runBenchmark": "Run benchmark",
+    "benchmarkDone": "RAG benchmark completed",
+    "benchmarkDoneBody": "{total} query(s) evaluated.",
+    "benchmarkFailed": "Failed to run RAG benchmark",
+    "precision": "precision",
+    "recall": "recall",
+    "mrr": "MRR",
+    "evaluations": "evaluations",
+    "passed": "{count} passed",
+    "failed": "{count} failed",
+    "needsReview": "{count} review",
+    "lastRun": "last run: {total}"
+  },
+  "progress": {
+    "title": "Learning {source}",
+    "aggregateTitle": "Integrating {count} source(s)",
+    "walk": "Mapping source files",
+    "ai": "CEO analyzing architecture and flows",
+    "snapshot": "Generating BKF snapshot",
+    "embedding": "Generating semantic embeddings",
+    "learning": "Feeding the knowledge base",
+    "done": "Knowledge base integrated",
+    "failed": "Failed to integrate knowledge",
+    "cancelled": "Indexing cancelled",
+    "pages": "{count} page(s)",
+    "files": "{count} file(s)",
+    "embeddings": "{current}/{total} embeddings",
+    "runningCount": "{count} active",
+    "doneCount": "{count} done",
+    "failedCount": "{count} failed",
+    "clearDone": "Clear completed",
+    "indexedTitle": "Knowledge integrated: {source}",
+    "indexedDescription": "{current}/{total} page(s) vectorized.",
+    "embeddingFailed": "Embedding failed: {source}",
+    "analyzeFailed": "Analysis failed: {source}"
+  },
+  "graph": {
+    "newPage": "New page",
+    "stats": "{nodes} nodes · {edges} connections",
+    "empty": "The workspace's brain is at the center. Create pages, analyze sources and watch the universe grow around it.",
+    "createFirstPage": "Create first page",
+    "filter": {
+      "all": "All",
+      "pages": "Pages",
+      "entities": "Entities"
+    },
+    "controls": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "center": "Center",
+      "reset": "Reset"
+    },
+    "toggleEntities": "Toggle entities (supernova reveal)"
+  },
+  "hud": {
+    "knowledgeMass": "Knowledge mass",
+    "chunks": "indexed segments",
+    "pages": "{count} pages",
+    "entities": "{count} entities",
+    "retrievals": "{count} retrievals",
+    "layers": "Layers",
+    "constellations": "{count} clusters",
+    "layer": {
+      "index": "Indexes",
+      "doc": "Docs",
+      "auto-generated": "Generated",
+      "agent-memory": "Memories",
+      "entity": "Entities"
+    },
+    "growth": "Growth",
+    "thisWeek": "+{count} this week",
+    "becomingKb": "Becoming the KB",
+    "topHubs": "Top hubs",
+    "pauseRotation": "Pause rotation",
+    "resumeRotation": "Resume rotation",
+    "inspector": {
+      "connections": "{count} links",
+      "mentions": "{count} mentions",
+      "retrievals": "{count} retrievals",
+      "segments": "{count} segments",
+      "open": "Open page",
+      "close": "Close"
+    }
+  }
+}

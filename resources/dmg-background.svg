@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 380" width="540" height="380">
+  <defs>
+    <radialGradient id="space" cx="0.5" cy="0.4" r="0.95">
+      <stop offset="0%"  stop-color="#161226"/>
+      <stop offset="55%" stop-color="#0c0a16"/>
+      <stop offset="100%" stop-color="#08070d"/>
+    </radialGradient>
+    <radialGradient id="nebulaA" cx="0.18" cy="0.15" r="0.5">
+      <stop offset="0%" stop-color="#7c46e6" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#7c46e6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebulaB" cx="0.85" cy="0.85" r="0.55">
+      <stop offset="0%" stop-color="#b14bd8" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#b14bd8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%"  stop-color="#c9a9ff" stop-opacity="0.55"/>
+      <stop offset="35%" stop-color="#7c46e6" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#7c46e6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="planet" cx="0.4" cy="0.38" r="0.7">
+      <stop offset="0%" stop-color="#2a2046"/>
+      <stop offset="70%" stop-color="#130d24"/>
+      <stop offset="100%" stop-color="#0a0712"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"  stop-color="#c9a9ff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#e9ddff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#a06bf2" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e6ddff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Espaço + nebulosa -->
+  <rect width="540" height="380" fill="url(#space)"/>
+  <rect width="540" height="380" fill="url(#nebulaA)"/>
+  <rect width="540" height="380" fill="url(#nebulaB)"/>
+
+  <!-- Estrelas -->
+  <g fill="#ffffff">
+    <circle cx="60"  cy="120" r="1.3" opacity="0.8"/>
+    <circle cx="120" cy="70"  r="0.8" opacity="0.5"/>
+    <circle cx="210" cy="250" r="1.0" opacity="0.55"/>
+    <circle cx="300" cy="300" r="0.7" opacity="0.4"/>
+    <circle cx="445" cy="110" r="1.2" opacity="0.7"/>
+    <circle cx="500" cy="170" r="0.8" opacity="0.5"/>
+    <circle cx="45"  cy="240" r="0.9" opacity="0.55"/>
+    <circle cx="90"  cy="320" r="1.2" opacity="0.7"/>
+    <circle cx="165" cy="350" r="0.8" opacity="0.5"/>
+    <circle cx="360" cy="345" r="1.0" opacity="0.6"/>
+    <circle cx="460" cy="310" r="0.9" opacity="0.55"/>
+    <circle cx="505" cy="270" r="1.3" opacity="0.75"/>
+    <circle cx="35"  cy="170" r="0.7" opacity="0.4"/>
+    <circle cx="470" cy="50"  r="0.7" opacity="0.45"/>
+    <circle cx="250" cy="55"  r="0.6" opacity="0.35"/>
+    <circle cx="390" cy="270" r="0.7" opacity="0.4"/>
+  </g>
+
+  <!-- Título -->
+  <text x="270" y="46" text-anchor="middle"
+    font-family="-apple-system, SF Pro Display, Helvetica, Arial, sans-serif"
+    font-size="23" font-weight="700" fill="url(#title)" letter-spacing="0.3">
+    Orkestral
+  </text>
+
+  <!-- Sistema planeta + anel (hero), entre o título e a faixa dos ícones (y≈140) -->
+  <g transform="translate(270 140)">
+    <ellipse cx="0" cy="0" rx="120" ry="100" fill="url(#coreGlow)"/>
+    <g transform="rotate(-20)">
+      <ellipse cx="0" cy="0" rx="100" ry="28" fill="none" stroke="url(#ring)" stroke-width="5" opacity="0.85" filter="url(#soft)"/>
+      <ellipse cx="0" cy="0" rx="100" ry="28" fill="none" stroke="#f3ecff" stroke-width="1.2" opacity="0.5"/>
+      <ellipse cx="0" cy="0" rx="78"  ry="22" fill="none" stroke="#c9a9ff" stroke-width="0.9" opacity="0.3"/>
+    </g>
+    <circle cx="0" cy="0" r="33" fill="url(#planet)"/>
+    <circle cx="0" cy="0" r="33" fill="none" stroke="#3a2d5c" stroke-width="1" opacity="0.55"/>
+    <g transform="rotate(-20)">
+      <path d="M -100 0 A 100 28 0 0 0 100 0" fill="none" stroke="url(#ring)" stroke-width="5" opacity="0.95" filter="url(#soft)"/>
+      <path d="M -100 0 A 100 28 0 0 0 100 0" fill="none" stroke="#ffffff" stroke-width="1.4" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Hint -->
+  <text x="270" y="366" text-anchor="middle"
+    font-family="-apple-system, SF Pro Text, Helvetica, Arial, sans-serif"
+    font-size="11" fill="#9b93b5" letter-spacing="0.4">
+    Arraste o Orkestral para a pasta Aplicativos
+  </text>
+</svg>

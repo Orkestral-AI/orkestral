@@ -1,0 +1,15 @@
+{
+  "$comment": [
+    "Orkestral Embeddings - manifesto do GGUF local obrigatorio para busca semantica/RAG.",
+    "O runtime llama.cpp vem do pacote node-llama-cpp; este arquivo cuida so dos pesos.",
+    "Para trocar o modelo, ajuste url/sha256 abaixo ou use EMBEDDINGS_MODEL_URL / EMBEDDINGS_MODEL_SHA256.",
+    "Modelo padrao: Qwen3-Embedding-0.6B Q8_0, oficial Qwen, Apache-2.0, GGUF, multilingue."
+  ],
+  "modelName": "Orkestral Embeddings",
+  "model": {
+    "url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf",
+    "sha256": "",
+    "etag": "c07418bff31dfab7ab0754eaa7a376c0cbb0cba7dada80fe4c5adb4d24d44291",
+    "sizeBytes": 639150592
+  }
+}

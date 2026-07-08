@@ -1,0 +1,177 @@
+{
+  "title": "Base de conhecimento",
+  "newPageTitle": "Nova página",
+  "untitled": "Sem título",
+  "pageNotFound": "Página não encontrada",
+  "selectWorkspaceFirst": "Selecione um workspace primeiro.",
+  "index": {
+    "subtitle": "O cérebro do workspace. Páginas com hierarquia, wikilinks {wikilink}, busca BM25 e indexação binária pros agentes.",
+    "createPage": "Criar nova página",
+    "empty": "Sem páginas ainda. Crie a primeira ou analise um source pra popular.",
+    "recentPages": "Páginas recentes"
+  },
+  "editor": {
+    "backlinksHeading": "Referenciado por ({count})"
+  },
+  "coverage": {
+    "title": "Cobertura por source",
+    "description": "Acompanhe o que foi aprendido por repo/pasta e corrija lacunas de agente ou KB.",
+    "loading": "Carregando cobertura da base…",
+    "unclassified": "sem role",
+    "pages": "{count} páginas",
+    "autoPages": "{count} automáticas",
+    "files": "{count} arquivos",
+    "embeddings": "{current}/{total} embeddings",
+    "createAgent": "Criar agente",
+    "analyze": "Reanalisar",
+    "agentCreated": "Agente criado: {name}",
+    "agentCreateFailed": "Falha ao criar agente",
+    "health": {
+      "empty": "vazio",
+      "indexing": "indexando",
+      "ready": "pronto",
+      "failed": "falhou",
+      "stale": "revisar"
+    }
+  },
+  "fineTuning": {
+    "title": "Prontidão de fine-tuning",
+    "loading": "Calculando qualidade do dataset…",
+    "readiness": "prontidão",
+    "usable": "úteis",
+    "avgScore": "score médio",
+    "ignored": "ignorados",
+    "total": "{count} exemplos totais",
+    "approved": "{count} aprovados",
+    "exported": "{count} exportados",
+    "undoInvalidated": "{count} invalidados por Undo",
+    "highQuality": "{count} alta qualidade",
+    "weightTrainingAvailable": "treino de pesos disponível",
+    "weightTrainingPending": "treino de pesos pendente",
+    "curate": "Curar exemplos",
+    "curationTitle": "Curadoria de aprendizado",
+    "curationDescription": "Aprove apenas exemplos com contexto real, resultado útil e escopo correto do source.",
+    "curationFailed": "Falha ao curar exemplo",
+    "loadingExamples": "Carregando exemplos…",
+    "emptyCuration": "Nenhum exemplo de aprendizado registrado ainda.",
+    "autoApproval": "Aprovação automática",
+    "autoApprovalArmed": "ativo · score ≥ {score}",
+    "manualApproval": "manual",
+    "workspaceScope": "Workspace",
+    "expectedOutput": "Resultado esperado",
+    "approve": "Aprovar",
+    "ignore": "Ignorar",
+    "edit": "Editar",
+    "invalidated": "Undo",
+    "export": "Exportar dataset",
+    "exportedTitle": "Dataset exportado",
+    "exportedBody": "{train} treino · {validation} validação",
+    "exportFailed": "Falha ao exportar dataset",
+    "statusLabel": {
+      "candidate": "candidato",
+      "approved": "aprovado",
+      "exported": "exportado",
+      "ignored": "ignorado"
+    },
+    "stage": {
+      "memory_learning": "aprendizado via memória/RAG",
+      "dataset_curation": "curadoria de dataset",
+      "dataset_ready": "dataset pronto",
+      "adapter_training_pending": "adapter/LoRA pendente"
+    },
+    "status": {
+      "empty": "vazio",
+      "collecting": "coletando",
+      "curate": "curadoria",
+      "ready_to_export": "pronto p/ exportar",
+      "ready_to_train": "pronto p/ treinar"
+    }
+  },
+  "rag": {
+    "title": "Qualidade do RAG",
+    "description": "Benchmark com feedback aprovado para medir se a busca encontra as páginas certas.",
+    "runBenchmark": "Rodar benchmark",
+    "benchmarkDone": "Benchmark de RAG concluído",
+    "benchmarkDoneBody": "{total} consulta(s) avaliadas.",
+    "benchmarkFailed": "Falha ao rodar benchmark de RAG",
+    "precision": "precisão",
+    "recall": "recall",
+    "mrr": "MRR",
+    "evaluations": "avaliações",
+    "passed": "{count} passaram",
+    "failed": "{count} falharam",
+    "needsReview": "{count} revisar",
+    "lastRun": "último run: {total}"
+  },
+  "progress": {
+    "title": "Aprendendo {source}",
+    "aggregateTitle": "Integrando {count} base(s)",
+    "walk": "Mapeando arquivos do source",
+    "ai": "CEO analisando arquitetura e fluxos",
+    "snapshot": "Gerando snapshot BKF",
+    "embedding": "Gerando embeddings semânticos",
+    "learning": "Alimentando base de conhecimento",
+    "done": "Base integrada com sucesso",
+    "failed": "Falha ao integrar base",
+    "cancelled": "Indexação cancelada",
+    "pages": "{count} página(s)",
+    "files": "{count} arquivo(s)",
+    "embeddings": "{current}/{total} embeddings",
+    "runningCount": "{count} ativo(s)",
+    "doneCount": "{count} concluído(s)",
+    "failedCount": "{count} falhou",
+    "clearDone": "Limpar concluídos",
+    "indexedTitle": "Base integrada: {source}",
+    "indexedDescription": "{current}/{total} página(s) vetorizadas.",
+    "embeddingFailed": "Embedding falhou: {source}",
+    "analyzeFailed": "Análise falhou: {source}"
+  },
+  "graph": {
+    "newPage": "Nova página",
+    "stats": "{nodes} nós · {edges} conexões",
+    "empty": "O cérebro do workspace está no centro. Crie páginas, analise sources e assista o universo crescer ao redor.",
+    "createFirstPage": "Criar primeira página",
+    "filter": {
+      "all": "Tudo",
+      "pages": "Páginas",
+      "entities": "Entidades"
+    },
+    "controls": {
+      "zoomIn": "Aproximar",
+      "zoomOut": "Afastar",
+      "center": "Centralizar",
+      "reset": "Resetar"
+    },
+    "toggleEntities": "Mostrar/ocultar entidades (surgir supernova)"
+  },
+  "hud": {
+    "knowledgeMass": "Massa de conhecimento",
+    "chunks": "segmentos indexados",
+    "pages": "{count} páginas",
+    "entities": "{count} entidades",
+    "retrievals": "{count} recuperações",
+    "layers": "Camadas",
+    "constellations": "{count} clusters",
+    "layer": {
+      "index": "Índices",
+      "doc": "Docs",
+      "auto-generated": "Gerados",
+      "agent-memory": "Memórias",
+      "entity": "Entidades"
+    },
+    "growth": "Crescimento",
+    "thisWeek": "+{count} esta semana",
+    "becomingKb": "Virando a base",
+    "topHubs": "Principais hubs",
+    "pauseRotation": "Pausar rotação",
+    "resumeRotation": "Retomar rotação",
+    "inspector": {
+      "connections": "{count} conexões",
+      "mentions": "{count} menções",
+      "retrievals": "{count} recuperações",
+      "segments": "{count} segmentos",
+      "open": "Abrir página",
+      "close": "Fechar"
+    }
+  }
+}

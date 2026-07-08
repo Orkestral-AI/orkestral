@@ -1,0 +1,61 @@
+# Orkestral headless na VPS (Node puro — sem Electron/Xvfb).
+#
+# Setup inicial (interativo — parear WhatsApp lendo o QR no terminal do servidor):
+#   docker compose run --rm -it orkestral init
+# Subir o daemon:
+#   docker compose up -d
+# URL da UI web (com o token de acesso):
+#   docker compose logs orkestral | grep "UI web"
+# Ver logs:
+#   docker compose logs -f
+#
+# Antes de tudo: copie .env.example para .env e defina ORKESTRAL_SECRET_KEY
+# (veja o .env.example para gerar).
+
+services:
+  orkestral:
+    build: .
+    image: orkestral:local
+    restart: unless-stopped
+    environment:
+      # Chave de 32 bytes em base64 pra cifrar segredos SEM keychain do SO (servidor).
+      # Obrigatória: sem ela cada container gera uma chave nova em secret.key e os
+      # segredos cifrados de antes ficam ilegíveis. Falha o `up` se não definida.
+      ORKESTRAL_SECRET_KEY: ${ORKESTRAL_SECRET_KEY:?defina no .env (openssl rand -base64 32)}
+
+      # AUTH DO AGENTE (claude/codex/gemini): o CLI spawnado pelo Orkestral herda
+      # estas vars (elas estão na allow-list de scrub — spawn-policy.ts SCRUB_KEEP),
+      # então DESCOMENTE a do seu provedor pra o agente conseguir autenticar dentro
+      # do container. Alternativa: configurar a key pela página Provedores (guardada
+      # cifrada no secret store) — aí não precisa passar env aqui.
+      #   Claude  → ANTHROPIC_API_KEY (ou CLAUDE_CODE_OAUTH_TOKEN; prefixo CLAUDE_* também passa)
+      #   Codex   → OPENAI_API_KEY
+      #   Gemini  → GEMINI_API_KEY
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    ports:
+      # Gateway web (UI no navegador). O acesso exige o token da URL (ver logs).
+      # Troque para "127.0.0.1:6750:6750" se for colocar um reverse proxy na frente.
+      - '6750:6750'
+    volumes:
+      # Estado ÚNICO do Node puro: SQLite (instances/default), workspaces, secret.key,
+      # auth de canal (Baileys), modelos baixados sob demanda. O volume antigo
+      # orkestral-config (~/.config/Orkestral, userData do Electron) não é mais usado —
+      # se você tinha um deploy da imagem Electron, pareie o canal de novo.
+      - orkestral-data:/home/orkestral/.orkestral
+    # Sobe o daemon logando pra stdout (sem TUI). --host 0.0.0.0: dentro do
+    # container o bind precisa aceitar o tráfego publicado pelo Docker.
+    command: ['serve', '--no-tui', '--host', '0.0.0.0']
+    healthcheck:
+      # `orkestral status` sai 0 se o DB abriu e há workspace resolvido. NÃO usamos
+      # --require-channel: instalação nova ainda sem canal pareado é saudável.
+      # Boot sobe serviços, então intervalo e start-period generosos.
+      test: ['CMD', 'node', 'bin/orkestral', 'status']
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 90s
+
+volumes:
+  orkestral-data:

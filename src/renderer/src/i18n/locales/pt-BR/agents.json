@@ -1,0 +1,469 @@
+{
+  "autonomy": {
+    "label": "Autonomia do time",
+    "globalBadge": "Global",
+    "description": "Configuração global deste workspace — define o quanto o time de agentes executa sozinho até o fim antes de pedir a sua aprovação na Caixa de entrada.",
+    "low": "Cauteloso",
+    "lowDetail": "Cada mudança importante passa por você. Os agentes propõem e esperam sua aprovação na Caixa de entrada antes de aplicar. Máximo controle, ritmo mais lento.",
+    "medium": "Balanceado",
+    "mediumDetail": "Os agentes revisam o trabalho entre si antes de concluir. Você só é chamado na Caixa de entrada para decisões importantes ou quando algo falha. Recomendado para o dia a dia.",
+    "high": "Autônomo",
+    "highDetail": "O time executa tudo até o fim sozinho, sem parar para revisão na Caixa de entrada. Ideal para mandar uma tarefa e voltar com ela pronta. Use quando confiar no time."
+  },
+  "list": {
+    "title": "Agentes",
+    "subtitle": "Time de agentes do workspace.",
+    "newAgent": "Novo agente",
+    "orchestratorCannotBeRemoved": "O Orchestrator não pode ser removido.",
+    "removeAgentTitle": "Remover agente?",
+    "removeAgentConfirm": "Remover agente \"{name}\"?",
+    "tags": {
+      "orchestrator": "orquestrador"
+    },
+    "caps": {
+      "editFiles": "edita arquivos",
+      "runCommands": "roda comandos",
+      "createAgents": "contrata agentes",
+      "assignTasks": "atribui tarefas"
+    },
+    "remove": "Remover",
+    "empty": {
+      "title": "Nenhum agente",
+      "description": "Crie agentes especialistas pra delegar tarefas (review, build, docs, etc).",
+      "create": "Criar agente"
+    }
+  },
+  "avatar": {
+    "alt": "Avatar do agente",
+    "change": "Trocar avatar",
+    "edit": "Editar",
+    "choose": "Escolha um avatar",
+    "shuffle": "Embaralhar",
+    "credit": "Estilo toon-head · DiceBear · gerado localmente"
+  },
+  "adapterFields": {
+    "chooseFile": "Escolher",
+    "chooseFileTitle": "Escolher arquivo no Finder",
+    "fileFilters": {
+      "markdownText": "Markdown / texto",
+      "allFiles": "Todos os arquivos"
+    }
+  },
+  "newDialog": {
+    "title": "Adicionar agente",
+    "descriptionAskCeo": "Recomendamos deixar o CEO configurar — ele conhece o time e ajusta permissões.",
+    "descriptionAdvanced": "Configuração avançada — todos os parâmetros do adapter, modelo e políticas.",
+    "askCeo": {
+      "nameLabel": "Nome do agente",
+      "namePlaceholder": "ex: Frontend Lead",
+      "missionLabel": "Missão",
+      "missionHint": "Descreva o que esse agente faz — o CEO vai usar isso pra configurar.",
+      "missionPlaceholder": "ex: Revisa PRs de frontend (React/TS), garante padrão de design, sugere refactors...",
+      "noCeoWarning": "Sem CEO configurado neste workspace. Use a configuração avançada pra criar o primeiro agente manualmente.",
+      "talkingToCeo": "Conversando com o CEO…",
+      "askCeoCreate": "Pedir pro CEO criar",
+      "configureManually": "Quero configurar manualmente (avançado)",
+      "errors": {
+        "workspaceUndefined": "Workspace não definido",
+        "ceoNotFound": "CEO/Orchestrator não encontrado",
+        "nameRequired": "Nome do agente é obrigatório"
+      },
+      "sessionTitle": "Criar agente: {name}",
+      "prompt": {
+        "intro": "Por favor, crie um novo agente chamado \"{name}\".",
+        "mission": "Missão: {mission}",
+        "instructions": "Sugira o adapter, modelo, capacidades e prompt do sistema apropriados. Quando estiver pronto, use a ferramenta de criação de agente."
+      }
+    },
+    "advanced": {
+      "nameLabel": "Nome do agente",
+      "namePlaceholder": "Nome do agente",
+      "titlePlaceholder": "Cargo (ex.: VP de Engenharia)",
+      "general": "Geral",
+      "adapter": "Adaptador",
+      "adapterType": "Tipo de adapter",
+      "comingSoon": "(em breve)",
+      "permissionsConfig": "Permissões e configuração",
+      "command": "Comando",
+      "commandHint": "Caminho ou nome do binário (deixe vazio pra usar o padrão do adapter).",
+      "providerOptions": "Opções do provedor",
+      "primaryModel": "Modelo primário",
+      "model": "Modelo",
+      "cheapModel": "Modelo econômico",
+      "cheapModelHint": "Usado quando uma run pede perfil barato (resumos, etc). O modelo primário continua intocado.",
+      "thinkingEffort": "Esforço de raciocínio",
+      "effort": {
+        "auto": "Auto",
+        "minimal": "Mínimo",
+        "low": "Baixo",
+        "medium": "Médio",
+        "high": "Alto",
+        "xhigh": "Muito alto"
+      },
+      "enableChrome": "Ativar Chrome",
+      "enableChromeHint": "Permite que o agente abra Chrome pra automação web.",
+      "skipPermissions": "Pular permissões",
+      "skipPermissionsHint": "Bypass de aprovacoes/sandbox do CLI (claude: --dangerously-skip-permissions, codex: --yolo).",
+      "maxTurns": "Máx. de turnos por run",
+      "instructionsFile": "Arquivo de instruções do agente",
+      "instructionsFileHint": "Arquivo Markdown injetado como contexto inicial (ex: AGENTS.md).",
+      "instructionsDirTitle": "Pasta de instruções",
+      "extraArgs": "Args extras (separados por vírgula)",
+      "extraArgsHint": "Argumentos extras passados pro CLI a cada run.",
+      "extraArgsPlaceholder": "ex.: --verbose, --foo=bar",
+      "envVars": "Variáveis de ambiente",
+      "envVarsHint": "Variáveis injetadas no processo do CLI. PAPERCLIP_* são automáticas.",
+      "envType": {
+        "plain": "Texto",
+        "secret": "Secreto"
+      },
+      "removeVar": "Remover",
+      "addVar": "+ Adicionar variável",
+      "runPolicy": "Política de execução",
+      "heartbeatInterval": "Heartbeat por intervalo",
+      "heartbeatIntervalHint": "Mantém o processo do CLI vivo entre turnos (mais rápido, mais memória).",
+      "capabilities": "Capacidades",
+      "capEditFiles": "Edita arquivos do projeto",
+      "capRunCommands": "Executa comandos no terminal",
+      "capCreateAgents": "Pode contratar outros agentes",
+      "capAssignTasks": "Atribui tarefas",
+      "systemPrompt": "Prompt do sistema",
+      "systemPromptPlaceholder": "ex: Você é um engenheiro frontend especialista em React...",
+      "testAgent": "Testar agente",
+      "creating": "Criando…",
+      "createAgent": "Criar agente",
+      "unknownError": "Erro desconhecido",
+      "errors": {
+        "workspaceUndefined": "Workspace não definido",
+        "nameRequired": "Nome é obrigatório"
+      },
+      "adapterSearch": "Buscar adapter…"
+    },
+    "reportsTo": {
+      "label": "Reporta para…",
+      "title": "Define a quem esse agente reporta na hierarquia",
+      "header": "Reporta para",
+      "noManager": "Sem gestor",
+      "ceoRole": "CEO · Orquestrador"
+    }
+  },
+  "page": {
+    "loading": "Carregando agente…",
+    "notFound": "Agente não encontrado.",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "issues": "Issues",
+      "instructions": "Instruções",
+      "skills": "Skills",
+      "configuration": "Configuração",
+      "runs": "Execuções",
+      "audit": "Auditoria"
+    },
+    "header": {
+      "working": "Trabalhando",
+      "orchestrator": "Orquestrador",
+      "runHeartbeat": "Rodar heartbeat",
+      "resume": "Retomar",
+      "pause": "Pausar",
+      "more": "Mais",
+      "copyAgentId": "Copiar ID do agente",
+      "resetSessions": "Resetar sessões",
+      "deleteAgent": "Excluir agente",
+      "resetSessionsConfirm": "Apagar todas as sessões deste agente? Não há como desfazer.",
+      "deleteConfirm": "Excluir o agente \"{name}\"? Todas as sessões, mensagens e runs serão removidas permanentemente."
+    },
+    "status": {
+      "idle": "Ocioso",
+      "live": "Ativo",
+      "paused": "Pausado",
+      "error": "Erro"
+    },
+    "assignTask": {
+      "button": "Atribuir task",
+      "dialogTitle": "Atribuir task para {name}",
+      "placeholder": "O que esse agente precisa fazer?",
+      "priorityLabel": "Prioridade:",
+      "create": "Criar task"
+    }
+  },
+  "dashboard": {
+    "stats": {
+      "runs14d": "Runs nos últimos 14d",
+      "successRate": "Taxa de sucesso",
+      "avgTime": "Tempo médio",
+      "lastHeartbeat": "Último heartbeat"
+    },
+    "lastRuns": {
+      "title": "Últimas execuções",
+      "hint": "Chat, code reviews e heartbeats — mais recentes primeiro",
+      "emptyTitle": "Sem execuções ainda",
+      "emptyDescription": "Mande uma mensagem no chat, rode um code review ou dispare um heartbeat pra começar."
+    },
+    "permissions": {
+      "title": "Permissões",
+      "hint": "O que esse agente pode fazer no workspace",
+      "createAgents": "Criar agentes",
+      "assignTasks": "Atribuir tarefas",
+      "editFiles": "Editar arquivos",
+      "runCommands": "Rodar comandos"
+    }
+  },
+  "instructions": {
+    "files": "Arquivos",
+    "createFile": "Criar novo arquivo",
+    "entry": "Entrada",
+    "unsaved": "Não salvo",
+    "deleteFile": "Excluir arquivo",
+    "deleteFileConfirm": "Excluir {name}?",
+    "editorPlaceholder": "Escreva markdown aqui…",
+    "selectFile": "Selecione um arquivo",
+    "newFilePlaceholder": "NOME.md",
+    "duplicateName": "Já existe um arquivo com esse nome."
+  },
+  "skills": {
+    "agentSkills": {
+      "title": "Skills do agente",
+      "hint": "Skills atachadas são injetadas como contexto extra no prompt do agente.",
+      "emptyTitle": "Sem skills atachadas",
+      "emptyDescription": "Atache uma skill do workspace abaixo pra ela aparecer no prompt deste agente.",
+      "detach": "Remover"
+    },
+    "available": {
+      "title": "Disponíveis no workspace",
+      "hint": "Skills criadas em /company/skills",
+      "emptyTitle": "Nenhuma skill criada",
+      "emptyDescription": "Vá em Skills (sidebar) pra criar a primeira skill do workspace.",
+      "attached": "Atachada",
+      "attach": "Atachar"
+    },
+    "tabSkills": "Skills",
+    "tabMcps": "MCPs",
+    "use": "Usar",
+    "inUse": "Em uso",
+    "kindSkill": "Skill",
+    "kindMcp": "MCP",
+    "noDescription": "Sem descrição",
+    "noContent": "Sem conteúdo",
+    "detailContent": "Conteúdo",
+    "detailConfig": "Configuração",
+    "emptySkillsTitle": "Nenhuma skill no workspace",
+    "emptySkillsDesc": "Crie skills em Recursos > Skills pra usar neste agente.",
+    "emptyMcpsTitle": "Nenhum MCP no workspace",
+    "emptyMcpsDesc": "Instale MCPs em Recursos > MCPs pra atribuir a este agente."
+  },
+  "config": {
+    "nav": {
+      "agent": "Agente",
+      "runtime": "Runtime",
+      "access": "Acesso",
+      "warnBadge": "Cuidado"
+    },
+    "identity": {
+      "title": "Identidade",
+      "hint": "Quem é esse agente e o que ele faz",
+      "name": "Nome",
+      "title2": "Título",
+      "title2Hint": "Como o agente se apresenta — ex: VP of Engineering",
+      "title2Placeholder": "ex: Frontend Lead",
+      "reportsTo": "Reporta pra",
+      "reportsToHint": "Define a hierarquia entre agentes",
+      "noManager": "Sem gestor (raiz)",
+      "capabilities": "Capacidades",
+      "capabilitiesHint": "Descrição livre do que o agente faz",
+      "capabilitiesPlaceholder": "Revisa PRs de frontend, garante padrão de design…"
+    },
+    "adapter": {
+      "title": "Adaptador",
+      "hint": "Qual modelo/CLI esse agente usa pra rodar",
+      "adapterType": "Tipo de adaptador",
+      "options": {
+        "claude": "Claude (CLI local)",
+        "codex": "Codex (CLI local)",
+        "gemini": "Gemini (CLI local)",
+        "orkestral": "Orkestral Forge (modelo local)"
+      }
+    },
+    "permsConfig": {
+      "title": "Execução do CLI",
+      "hint": "Parâmetros que controlam como o CLI roda em cada invocação",
+      "autonomy": "Autonomia do time",
+      "autonomyHint": "Quanto o time executa sozinho até o fim antes de pedir aprovação. Vale pra todo o workspace (definido no CEO).",
+      "autonomyLow": "Cauteloso — pede aprovação",
+      "autonomyLowHint": "revisão completa, escala pra você",
+      "autonomyMedium": "Balanceado",
+      "autonomyMediumHint": "revisão entre agentes (padrão)",
+      "autonomyHigh": "Autônomo — manda e dorme",
+      "autonomyHighHint": "executa e finaliza sozinho, sem inbox",
+      "thinkingEffort": "Esforço de raciocínio",
+      "thinkingEffortHint": "Quanto raciocínio o modelo deve fazer antes de responder",
+      "bypassSandbox": "Ignorar sandbox",
+      "bypassSandboxHint": "Passa bypass de aprovacoes/sandbox (claude: --dangerously-skip-permissions, codex: --yolo). Use com cuidado.",
+      "enableSearch": "Habilitar busca",
+      "enableSearchHint": "Habilita ferramenta de busca web do CLI (se suportado).",
+      "fastMode": "Modo rápido",
+      "fastModeHint": "Usa o modo mais rápido do CLI (menor latência, menos contexto).",
+      "extraArgs": "Argumentos extras (separados por vírgula)",
+      "extraArgsHint": "Args extras passados ao CLI. Ex: --verbose, --foo=bar",
+      "extraArgsPlaceholder": "ex.: --verbose, --foo=bar",
+      "envVars": "Variáveis de ambiente",
+      "envVarsHint": "KEY = nome da variável que o processo espera. Secret = valor é cifrado e resolvido no runtime.",
+      "addVar": "Adicionar variável",
+      "timeout": "Tempo limite (s)",
+      "timeoutHint": "Tempo máximo de uma invocação. 0 = sem limite.",
+      "grace": "Período de tolerância para interrupção (s)",
+      "graceHint": "Quanto tempo aguardar após SIGTERM antes de mandar SIGKILL."
+    },
+    "runPolicy": {
+      "title": "Política de execução",
+      "hint": "Quando e como o agente é executado automaticamente",
+      "heartbeatInterval": "Heartbeat no intervalo",
+      "heartbeatIntervalHint": "Quando ligado, o Orkestral roda o agente automaticamente conforme o intervalo abaixo, usando o prompt do HEARTBEAT.md.",
+      "interval": "Intervalo (minutos)",
+      "intervalHint": "Mínimo 1 minuto.",
+      "advanced": "Política de execução avançada",
+      "wakeOnDemand": "Acordar sob demanda",
+      "wakeOnDemandHint": "Permite que outros agentes acordem este sob demanda (callback).",
+      "cooldown": "Tempo de espera (s)",
+      "cooldownHint": "Intervalo mínimo entre runs do mesmo agente.",
+      "maxConcurrent": "Execuções simultâneas máx.",
+      "maxConcurrentHint": "Máximo de runs simultâneas globais.",
+      "continueAfterMaxTurn": "Continuar após parada por máx. de turnos",
+      "continueAfterMaxTurnHint": "Quando o CLI atinge o limite de turnos, dispara continuação automaticamente.",
+      "continuationAttempts": "Tentativas de continuação",
+      "continuationDelay": "Atraso de continuação (s)"
+    },
+    "perms": {
+      "title": "Permissões",
+      "hint": "O que esse agente pode fazer no workspace",
+      "createAgents": "Criar agentes",
+      "createAgentsHint": "Esse agente pode hire/contratar outros agentes.",
+      "assignTasks": "Atribuir tarefas",
+      "assignTasksHint": "Pode delegar tasks pra outros agentes.",
+      "editFiles": "Editar arquivos",
+      "editFilesHint": "Pode modificar arquivos do repositório.",
+      "runCommands": "Rodar comandos",
+      "runCommandsHint": "Pode executar comandos shell (perigoso — use com cuidado)."
+    },
+    "saveBar": {
+      "unsaved": "Alterações não salvas",
+      "discard": "Descartar",
+      "save": "Salvar configuração"
+    },
+    "envRow": {
+      "markPlain": "Marcar como Plain",
+      "markSecret": "Marcar como Secret (cifra)",
+      "seal": "Selar",
+      "removeVar": "Remover variável"
+    },
+    "model": {
+      "label": "Modelo",
+      "loading": "Carregando modelos disponíveis…",
+      "error": "Não foi possível listar os modelos — usando default",
+      "available": "{n} modelos disponíveis pelo adapter {adapter}",
+      "defaultOption": "Default (configurado no CLI)",
+      "customSuffix": "{value} (personalizado)"
+    }
+  },
+  "apiKeys": {
+    "title": "Chaves de API",
+    "hint": "Tokens pra autenticar chamadas externas pra esse agente",
+    "tokenCreated": "Token criado — copie agora",
+    "copy": "Copiar",
+    "dismiss": "Dispensar",
+    "tokenWarning": "Esse valor não será mostrado de novo. Guarde em local seguro.",
+    "namePlaceholder": "Nome (ex: production)",
+    "create": "Criar API Key",
+    "noActiveKeys": "Nenhuma key ativa.",
+    "neverUsed": "nunca usada",
+    "usedRelative": "usado {when}",
+    "revoke": "Revogar",
+    "revokeConfirm": "Revogar a key \"{name}\"? Não dá pra desfazer."
+  },
+  "issues": {
+    "status": {
+      "backlog": "Backlog",
+      "todo": "A fazer",
+      "in_progress": "Em progresso",
+      "in_review": "Em revisão",
+      "blocked": "Bloqueada",
+      "done": "Concluída",
+      "cancelled": "Cancelada"
+    },
+    "assigned": "Issues atribuídas",
+    "summary": "· {open} abertas, {total} total",
+    "filterOpen": "Abertas",
+    "filterAll": "Todas",
+    "emptyActive": "{name} não tem issues abertas. O heartbeat vai checar de novo em breve.",
+    "emptyAll": "{name} ainda não foi assignado a nenhuma issue."
+  },
+  "runs": {
+    "title": "Execuções",
+    "hint": "Histórico unificado: mensagens de chat, code reviews e heartbeats",
+    "emptyTitle": "Sem execuções ainda",
+    "emptyDescription": "Mande uma mensagem no chat, rode um code review ou dispare um heartbeat — todas as execuções deste agente aparecem aqui.",
+    "histHintOne": "{n} execução no histórico — chat, code reviews e heartbeats",
+    "histHintOther": "{n} execuções no histórico — chat, code reviews e heartbeats",
+    "filterAll": "Todas",
+    "filterIssues": "Issues",
+    "filterChat": "Chat",
+    "filterCodeReviews": "Revisões de código",
+    "filterHeartbeat": "Heartbeat",
+    "noneOfType": "Nenhuma execução desse tipo.",
+    "status": {
+      "queued": "Fila",
+      "running": "Rodando",
+      "done": "OK",
+      "error": "Falhou",
+      "cancelled": "Cancelada"
+    }
+  },
+  "time": {
+    "now": "agora",
+    "minutesAgo": "{n}min atrás",
+    "hoursAgo": "{n}h atrás",
+    "daysAgo": "{n}d atrás"
+  },
+  "audit": {
+    "title": "Auditoria do agente",
+    "subtitle": "Tudo o que {name} fez — agrupado por issue.",
+    "empty": "Nenhuma ação registrada ainda.",
+    "emptyHint": "Quando este agente executar issues, cada passo (leitura, geração, ferramenta, mudança, validação) aparece aqui.",
+    "noneForFilter": "Nenhuma ação para este filtro.",
+    "noIssue": "Sem issue",
+    "summary": "{actions} ações · {files} arquivos mudados · {tools} ferramentas",
+    "sectionTitle": "Atividade",
+    "sectionHint": "Tudo que o agente fez, por issue — com os arquivos que mudaram.",
+    "changedFiles": "Arquivos alterados",
+    "noDiff": "Sem diff no working tree — as mudanças podem já ter sido commitadas.",
+    "diffError": "Não foi possível carregar o diff.",
+    "diffTruncated": "Diff truncado ({n} linhas).",
+    "stats": {
+      "actions": "Ações",
+      "changes": "Mudanças",
+      "tools": "Ferramentas",
+      "last": "Última atividade"
+    },
+    "filters": {
+      "all": "Todas",
+      "patch": "Mudanças",
+      "tool": "Ferramentas",
+      "read": "Leitura",
+      "generate": "Geração",
+      "validate": "Validação",
+      "error": "Erros"
+    },
+    "kind": {
+      "run": "Execução",
+      "plan": "Plano",
+      "retrieve": "Busca",
+      "read": "Leitura",
+      "generate": "Geração",
+      "tool": "Ferramenta",
+      "patch": "Mudança",
+      "validate": "Validação",
+      "learn": "Aprendizado",
+      "fallback": "Fallback",
+      "error": "Erro"
+    }
+  }
+}

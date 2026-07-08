@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orkestral — Mapa de Arquitetura p/ Web + Mobile</title>
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --bg2: #11141b;
+        --card: #151925;
+        --card2: #1b2030;
+        --line: #262c3d;
+        --line2: #333b52;
+        --tx: #e7ebf3;
+        --tx2: #aab3c5;
+        --tx3: #707a90;
+        --acc: #8b7cf6;
+        --acc2: #6ee7d2;
+        --ok: #4ade80;
+        --warn: #fbbf24;
+        --bad: #f87171;
+        --blue: #60a5fa;
+        --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+        --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--tx);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.55;
+      }
+      body {
+        overflow-x: hidden;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 20px 100px;
+      }
+      header.hero {
+        padding: 64px 20px 40px;
+        border-bottom: 1px solid var(--line);
+        background:
+          radial-gradient(900px 380px at 12% -10%, rgba(139, 124, 246, 0.16), transparent 60%),
+          radial-gradient(700px 320px at 100% 0%, rgba(110, 231, 210, 0.1), transparent 55%);
+      }
+      .hero-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .kick {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--acc);
+        margin: 0 0 14px;
+      }
+      h1 {
+        font-size: clamp(28px, 5vw, 46px);
+        line-height: 1.05;
+        margin: 0 0 16px;
+        letter-spacing: -0.02em;
+      }
+      h1 .g {
+        background: linear-gradient(100deg, var(--acc), var(--acc2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .lede {
+        font-size: clamp(15px, 2vw, 18px);
+        color: var(--tx2);
+        max-width: 760px;
+        margin: 0;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 34px;
+      }
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 16px 14px;
+      }
+      .stat .n {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .stat .n.acc {
+        color: var(--acc2);
+      }
+      .stat .l {
+        font-size: 11.5px;
+        color: var(--tx3);
+        margin-top: 3px;
+        line-height: 1.35;
+      }
+      section {
+        margin-top: 56px;
+      }
+      h2 {
+        font-size: 13px;
+        font-family: var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--tx3);
+        border-top: 1px solid var(--line);
+        padding-top: 22px;
+        margin: 0 0 8px;
+      }
+      h2 .num {
+        color: var(--acc);
+        margin-right: 10px;
+      }
+      .h2sub {
+        color: var(--tx);
+        font-size: clamp(20px, 3vw, 27px);
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        margin: 0 0 22px;
+      }
+      p {
+        color: var(--tx2);
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      @media (max-width: 760px) {
+        .grid2,
+        .grid3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+      }
+      .card h3 {
+        margin: 0 0 6px;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+      .card p {
+        margin: 0;
+        font-size: 13.5px;
+        color: var(--tx2);
+      }
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+      }
+
+      /* layer stack */
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .layer {
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        padding: 16px 18px;
+        background: var(--card);
+        position: relative;
+        overflow: hidden;
+      }
+      .layer::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+      }
+      .layer.ui::before {
+        background: var(--acc2);
+      }
+      .layer.bridge::before {
+        background: var(--blue);
+      }
+      .layer.back::before {
+        background: var(--acc);
+      }
+      .layer.native::before {
+        background: var(--bad);
+      }
+      .layer .lt {
+        font-weight: 650;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .layer .ld {
+        color: var(--tx2);
+        font-size: 13px;
+        margin-top: 5px;
+      }
+      .pill {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line2);
+        color: var(--tx2);
+      }
+      .pill.ok {
+        color: var(--ok);
+        border-color: rgba(74, 222, 128, 0.35);
+        background: rgba(74, 222, 128, 0.08);
+      }
+      .pill.warn {
+        color: var(--warn);
+        border-color: rgba(251, 191, 36, 0.35);
+        background: rgba(251, 191, 36, 0.08);
+      }
+      .pill.bad {
+        color: var(--bad);
+        border-color: rgba(248, 113, 113, 0.35);
+        background: rgba(248, 113, 113, 0.08);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .tablewrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--tx3);
+        background: var(--bg2);
+        position: sticky;
+        top: 0;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--acc2);
+      }
+      .b {
+        font-weight: 650;
+        color: var(--tx);
+      }
+      .badge {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 2px 7px;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+      .b-ok {
+        color: var(--ok);
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+      }
+      .b-warn {
+        color: var(--warn);
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+      }
+      .b-bad {
+        color: var(--bad);
+        background: rgba(248, 113, 113, 0.1);
+        border: 1px solid rgba(248, 113, 113, 0.3);
+      }
+
+      ul.clean {
+        list-style: none;
+        padding: 0;
+        margin: 12px 0 0;
+      }
+      ul.clean li {
+        padding: 8px 0 8px 26px;
+        position: relative;
+        color: var(--tx2);
+        font-size: 13.5px;
+        border-bottom: 1px dashed var(--line);
+      }
+      ul.clean li:last-child {
+        border-bottom: none;
+      }
+      ul.clean li::before {
+        content: '›';
+        position: absolute;
+        left: 6px;
+        color: var(--acc);
+        font-weight: 700;
+      }
+
+      .callout {
+        border-radius: 14px;
+        padding: 18px 20px;
+        border: 1px solid var(--line2);
+        background: linear-gradient(180deg, rgba(139, 124, 246, 0.1), rgba(139, 124, 246, 0.02));
+      }
+      .callout.warn {
+        background: linear-gradient(180deg, rgba(251, 191, 36, 0.1), transparent);
+        border-color: rgba(251, 191, 36, 0.3);
+      }
+      .callout .ct {
+        font-weight: 650;
+        margin-bottom: 4px;
+      }
+      .callout p {
+        margin: 0;
+        font-size: 13.5px;
+      }
+
+      /* roadmap */
+      .road {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .phase {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 16px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .phase:last-child {
+        border-bottom: none;
+      }
+      .pn {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--bg);
+        background: linear-gradient(160deg, var(--acc), var(--acc2));
+        border-radius: 10px;
+        height: 40px;
+        width: 40px;
+        display: grid;
+        place-items: center;
+      }
+      .phase h4 {
+        margin: 0 0 4px;
+        font-size: 16px;
+      }
+      .phase p {
+        margin: 0;
+        font-size: 13.5px;
+      }
+      .phase .eta {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--tx3);
+        margin-top: 6px;
+      }
+
+      .target {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+      }
+      .tier {
+        border: 1px dashed var(--line2);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+      }
+      .tier:last-child {
+        margin-bottom: 0;
+      }
+      .tier .th {
+        font-weight: 650;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tier .tb {
+        color: var(--tx2);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      .arrow {
+        text-align: center;
+        color: var(--tx3);
+        font-size: 18px;
+        margin: 2px 0;
+      }
+      .foot {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--tx3);
+        font-size: 12px;
+        font-family: var(--mono);
+      }
+      a {
+        color: var(--acc2);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="kick">Mapa de Arquitetura · Desktop → Web → Mobile</p>
+        <h1>
+          Orkestral hoje é um <span class="g">backend Node empacotado num Electron</span>. Pra virar
+          web e mobile, o trabalho é separar esse backend do app.
+        </h1>
+        <p class="lede">
+          O processo <span class="mono">main</span> do Electron já É um servidor completo (DB,
+          execução de agentes, MCP, schedulers). O <span class="mono">renderer</span> é a UI. O
+          caminho pra web/mobile é promover o <span class="mono">main</span> a um servidor hospedado
+          e trocar a ponte IPC por HTTP/WebSocket. Boa notícia: vários pedaços já são remotos.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="n">~138k</div>
+            <div class="l">linhas TS/TSX</div>
+          </div>
+          <div class="stat">
+            <div class="n acc">378</div>
+            <div class="l">itens de API (342 chamadas + 36 eventos)</div>
+          </div>
+          <div class="stat">
+            <div class="n">19</div>
+            <div class="l">domínios de API</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--bad)">~60</div>
+            <div class="l">canais presos à máquina local</div>
+          </div>
+          <div class="stat">
+            <div class="n">99 / 52</div>
+            <div class="l">services / repositories</div>
+          </div>
+          <div class="stat">
+            <div class="n">73</div>
+            <div class="l">migrations SQLite</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <!-- 1 -->
+      <section>
+        <h2><span class="num">01</span>Arquitetura atual</h2>
+        <div class="h2sub">Quatro camadas — duas já são "servidor", duas são "app"</div>
+        <div class="stack">
+          <div class="layer ui">
+            <div class="lt">
+              Renderer (UI) <span class="pill ok">portável</span>
+              <span class="mono" style="color: var(--tx3)">src/renderer</span>
+            </div>
+            <div class="ld">
+              React 19 · react-router (HashRouter) · Zustand (25 stores) · TanStack Query · Tailwind
+              v4 · i18n pt/en · 34 páginas. Vira web direto; mobile = React Native reaproveitando
+              lógica, não a árvore DOM.
+            </div>
+          </div>
+          <div class="arrow">↑ ↓ &nbsp; IPC tipado</div>
+          <div class="layer bridge">
+            <div class="lt">
+              Preload (ponte) <span class="pill warn">substituir</span>
+              <span class="mono" style="color: var(--tx3)">src/preload</span>
+            </div>
+            <div class="ld">
+              <code>contextBridge</code> expõe <span class="mono">window.orkestral.*</span> (invoke)
+              e <span class="mono">window.orkestralEvents.*</span> (push). É exatamente o ponto que
+              vira cliente HTTP/WebSocket.
+            </div>
+          </div>
+          <div class="arrow">↑ ↓</div>
+          <div class="layer back">
+            <div class="lt">
+              Main = Backend <span class="pill warn">virar servidor</span>
+              <span class="mono" style="color: var(--tx3)">src/main</span>
+            </div>
+            <div class="ld">
+              DB (SQLite+Drizzle), 30 handlers IPC, 99 services, execução de agentes, servidor MCP
+              HTTP, 3 schedulers (heartbeat/routine/monitor), auth cloud. Tudo isso precisa rodar
+              hospedado, sem janela Electron.
+            </div>
+          </div>
+          <div class="arrow">↑ ↓</div>
+          <div class="layer native">
+            <div class="lt">
+              Dependências nativas / SO <span class="pill bad">re-arquitetar</span>
+            </div>
+            <div class="ld">
+              better-sqlite3, node-pty (terminal), node-llama-cpp (Forge/embeddings), whisper (voz),
+              dockerode, baileys (WhatsApp), spawn de CLIs (claude/codex/cursor), filesystem do
+              repo. Isto é o que prende na máquina do dev.
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <p>
+            <span class="b">Contrato único e tipado:</span>
+            <code>src/shared/ipc-contract.ts</code> (~2820 linhas) define os 342 canais com
+            request/response tipados. Ele já é, na prática, a especificação de API — dá pra gerar um
+            servidor tRPC/REST a partir dele quase mecanicamente. <code>src/shared/</code> inteiro é
+            TS agnóstico, compartilhável entre cliente web, mobile e servidor sem mudança.
+          </p>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section>
+        <h2><span class="num">02</span>Camada de comunicação</h2>
+        <div class="h2sub">IPC mapeia 1:1 pra HTTP + WebSocket</div>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Hoje (Electron)</th>
+                <th>Web / Mobile</th>
+                <th>Nota</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ipcRenderer.invoke(canal, p)</code></td>
+                <td><span class="b">POST /api/dominio/acao</span> (ou tRPC)</td>
+                <td>
+                  342 canais → endpoints. Nome <span class="mono">dominio:acao</span> vira
+                  <span class="mono">/api/dominio/acao</span>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>webContents.send(canal, p)</code></td>
+                <td><span class="b">WebSocket / SSE</span></td>
+                <td>36 eventos push (stream de chat, terminal, logs, docker, trace…).</td>
+              </tr>
+              <tr>
+                <td><span class="mono">window.orkestral.*</span></td>
+                <td><span class="b">cliente de API gerado</span></td>
+                <td>Mesma assinatura, troca o transporte.</td>
+              </tr>
+              <tr>
+                <td>preload contextBridge</td>
+                <td>
+                  <span class="mono">fetch</span> / <span class="mono">WebSocket</span> nativo
+                </td>
+                <td>some no web; no RN idem.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn" style="margin-top: 14px">
+          <div class="ct">⚠ O acoplamento é o maior trabalho da UI</div>
+          <p>
+            <span class="mono">window.orkestral[...]</span> é chamado
+            <span class="b">cru, inline, em 105 arquivos / ~592 lugares</span>, 304 canais
+            distintos. Não há camada de abstração. Primeiro refactor obrigatório: extrair uma
+            interface <span class="mono">OrkestralApiClient</span> (1 interface, 3 implementações:
+            IPC, HTTP, mobile) e um <span class="mono">OrkestralEventBus</span> pros eventos. Sem
+            isso, web e mobile não compartilham nada.
+          </p>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section>
+        <h2><span class="num">03</span>O bloqueador central</h2>
+        <div class="h2sub">
+          Como os agentes executam — e por que isso não roda no navegador/celular
+        </div>
+        <p>
+          Todo adapter principal é literalmente um
+          <code>child_process.spawn("claude" | "codex" | "cursor-agent")</code>: binários que
+          precisam existir no <span class="mono">PATH</span> da máquina, com acesso ao repositório
+          em disco. Não existe equivalente REST desses CLIs.
+        </p>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Adapter</th>
+                <th>Como roda</th>
+                <th>Onde pode viver</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="b">claude_local</td>
+                <td><code>spawn("claude" …stream-json)</code></td>
+                <td><span class="badge b-warn">host com CLI</span></td>
+              </tr>
+              <tr>
+                <td class="b">codex_local</td>
+                <td><code>spawn("codex" exec --json)</code></td>
+                <td><span class="badge b-warn">host com CLI</span></td>
+              </tr>
+              <tr>
+                <td class="b">cursor_local</td>
+                <td><code>spawn("cursor-agent")</code></td>
+                <td><span class="badge b-warn">host com CLI</span></td>
+              </tr>
+              <tr>
+                <td class="b">orkestral_local (Forge)</td>
+                <td>node-llama-cpp in-process, GGUF ~4.7GB</td>
+                <td><span class="badge b-bad">máquina/GPU</span></td>
+              </tr>
+              <tr>
+                <td class="b">openclaw_gateway</td>
+                <td>WebSocket RPC p/ host remoto (ED25519)</td>
+                <td><span class="badge b-ok">já é remoto</span></td>
+              </tr>
+              <tr>
+                <td class="b">cursor_cloud</td>
+                <td>SDK remoto (stub hoje)</td>
+                <td><span class="badge b-ok">remoto qdo pronto</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top: 14px">
+          <div class="ct">
+            ★ O padrão pra web/mobile já existe no código:
+            <span class="mono">openclaw_gateway</span>
+          </div>
+          <p>
+            É um protocolo WebSocket completo (v3, auth por device, frame-RPC) que manda o prompt
+            pra um host remoto e faz streaming da saída de volta — exatamente o modelo "Orkestral
+            como cliente, execução como serviço remoto". O destino natural é um
+            <span class="b">runner host por workspace</span>: uma VM/container com os CLIs + git +
+            repo + o backend Orkestral rodando, que o app web/mobile acessa por WebSocket recebendo
+            os mesmos eventos <span class="mono">chat:stream</span> /
+            <span class="mono">issue:execution-event</span> /
+            <span class="mono">terminal:data</span>.
+          </p>
+        </div>
+        <div class="grid2" style="margin-top: 14px">
+          <div class="card">
+            <h3>5 travas absolutas de portabilidade</h3>
+            <ul class="clean">
+              <li>Spawn dos CLIs (claude/codex/cursor) — precisam estar instalados no host</li>
+              <li>Filesystem do repo (CWD) — agente lê/escreve arquivos, roda git/tsc/php -l</li>
+              <li>node-pty — terminal real, exige PTY do SO (impossível no browser)</li>
+              <li>node-llama-cpp / GGUF — binário nativo Metal/CUDA, modelos GB</li>
+              <li>
+                Servidor MCP interno em <span class="mono">localhost</span> — dá as ferramentas ao
+                CLI; tem que estar no mesmo host do agente
+              </li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Schedulers de fundo (precisam de processo vivo)</h3>
+            <ul class="clean">
+              <li>Heartbeat (60s) — delega issues / roda resumo Forge por agente</li>
+              <li>Routine (60s) — dispara prompt agendado por rotina</li>
+              <li>Monitor (60s) — re-executa issues por cron</li>
+              <li>Forge update (24h) + flush de signals — telemetria pro cloud</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 12.5px; color: var(--tx3)">
+              No modelo hospedado viram jobs do servidor/runner — não somem.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section>
+        <h2><span class="num">04</span>Camada de dados</h2>
+        <div class="h2sub">Já é multi-workspace; falta ser multi-usuário remoto</div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Estado atual</h3>
+            <p>
+              <span class="b">SQLite</span> (better-sqlite3, síncrono) + Drizzle, arquivo único em
+              <span class="mono">~/.orkestral/…/orkestral.db</span>. 73 migrations manuais por
+              <span class="mono">user_version</span>. ~60 tabelas em 7 domínios (agents, issues,
+              chat, kb, integrações, observabilidade, identidade).
+            </p>
+            <p style="margin-top: 10px">
+              <span class="b" style="color: var(--ok)">Bom:</span>
+              <span class="mono">workspaceId</span> é a coluna de tenancy em quase tudo, com
+              <span class="mono">ON DELETE CASCADE</span>. A estrutura já é escopada por workspace.
+            </p>
+          </div>
+          <div class="card">
+            <h3>10 lacunas pra backend remoto</h3>
+            <ul class="clean">
+              <li>
+                <span class="badge b-bad">crítico</span> sem <span class="mono">user_id</span> / sem
+                contas de usuário
+              </li>
+              <li>
+                <span class="badge b-bad">crítico</span> sem auth/sessão (cloud account é blob JSON
+                em settings)
+              </li>
+              <li>
+                <span class="badge b-bad">crítico</span> tokens cifrados com
+                <span class="mono">safeStorage</span> (keychain do SO) — não migra direto
+              </li>
+              <li>
+                <span class="badge b-bad">crítico</span> SQLite síncrono → portar pra Postgres
+              </li>
+              <li>
+                <span class="badge b-warn">alto</span> caminhos de filesystem salvos no DB
+                (workspaces.path, sources.path…)
+              </li>
+              <li>
+                <span class="badge b-warn">alto</span> embeddings = GGUF local + cosine em memória
+                (cap 5000)
+              </li>
+              <li>
+                <span class="badge b-warn">alto</span> auth do WhatsApp em arquivos do Electron, não
+                no DB
+              </li>
+              <li>
+                <span class="badge b-warn">médio</span> sem camada de org acima do workspace
+                (billing/time)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section>
+        <h2><span class="num">05</span>MCP, Skills e Integrações</h2>
+        <div class="h2sub">
+          MCP remoto/URL <span style="color: var(--ok)">já é suportado</span> — não é só plano
+        </div>
+        <p>
+          O servidor MCP do Orkestral <span class="b">já é HTTP</span> (roda em
+          <span class="mono">127.0.0.1:porta</span> com token), não stdio. E
+          <code>buildMcpConfigForRun()</code> em <code>chat-service.ts</code> já emite os dois
+          transportes no mesmo formato:
+        </p>
+        <div class="grid2">
+          <div class="card">
+            <div class="tag">REMOTO (o futuro)</div>
+            <h3 style="margin-top: 6px">
+              <code style="font-size: 14px">{ type:'http', url, headers }</code>
+            </h3>
+            <p>
+              Transporte <span class="mono">McpTransport = 'stdio' | 'http' | 'sse'</span> é tipo de
+              produção. A infra de MCP por URL está operacional — falta os catálogos apontarem pra
+              ela. É exatamente a direção "MCP abre a URL dele, não no app".
+            </p>
+          </div>
+          <div class="card">
+            <div class="tag">LOCAL (hoje, maioria)</div>
+            <h3 style="margin-top: 6px">
+              <code style="font-size: 14px">{ command, args, env }</code>
+            </h3>
+            <p>
+              Os 22 MCPs do catálogo curado ainda são stdio (processos
+              <span class="mono">npx</span>). Esses precisam de host; os HTTP/URL portam limpo pra
+              web/mobile.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <h3>Integrações — a maioria já é API remota</h3>
+          <div class="tablewrap" style="margin-top: 10px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Remoto (porta limpo)</th>
+                  <th>Local (precisa de host)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    GitHub, Sentry, Azure DevOps, New Relic, Better Stack, Telegram (Bot API), Cloud
+                    Auth (Supabase, já tem web em orkestral.pro), Forge Signals, OpenClaw Gateway,
+                    PulseMCP
+                  </td>
+                  <td>
+                    WhatsApp (baileys, WebSocket local), Voz (GGUF local), Docker, Terminal,
+                    Screenshot, embeddings locais, secrets via safeStorage
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 12px">
+            <span class="b">Catálogo da marketplace:</span> 3 tiers — bundled estático (offline),
+            PulseMCP (16k+ MCPs, com version-pinning anti-supply-chain) e GitHub skills. Já existe
+            hook de env pra um registry hospedado futuro (<span class="mono"
+              >ORKESTRAL_MARKETPLACE_*_API</span
+            >).
+          </p>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section>
+        <h2><span class="num">06</span>App mobile — escopo realista</h2>
+        <div class="h2sub">Celular é "comando e acompanhamento", não IDE</div>
+        <p>
+          Mobile não vai rodar terminal, IDE, docker ou git local — isso fica no desktop/web. O
+          valor no celular é:
+          <span class="b"
+            >acompanhar agentes, aprovar/revisar, conversar, ver observabilidade e disparar
+            trabalho</span
+          >
+          que executa no runner remoto.
+        </p>
+        <div class="grid3">
+          <div class="card">
+            <h3 style="color: var(--ok)">Entra fácil</h3>
+            <ul class="clean">
+              <li>Home / Dashboard</li>
+              <li>Chat / Session</li>
+              <li>Inbox (propostas)</li>
+              <li>Issues + detalhe</li>
+              <li>Goals</li>
+              <li>Agents (lista/config)</li>
+              <li>Skills / atribuição</li>
+              <li>Costs · Activity</li>
+              <li>Sentry / Observability</li>
+              <li>Channels (status WhatsApp/Telegram)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color: var(--warn)">Dá, com trabalho</h3>
+            <ul class="clean">
+              <li>Code reviews (ler + aprovar)</li>
+              <li>Issue detail com diff (read-only)</li>
+              <li>Integrations / Providers (OAuth mobile)</li>
+              <li>Push notifications de eventos</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color: var(--bad)">Fica no desktop</h3>
+            <ul class="clean">
+              <li>Sources / IDE (CodeMirror)</li>
+              <li>Terminal (xterm/pty)</li>
+              <li>Docker</li>
+              <li>Logs brutos</li>
+              <li>Knowledge graph editor</li>
+              <li>Code changes (edição)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 14px">
+          <div class="ct">Stack mobile recomendada</div>
+          <p>
+            React Native + (NativeWind p/ reaproveitar Tailwind) consumindo o mesmo
+            <span class="mono">OrkestralApiClient</span> e
+            <span class="mono">OrkestralEventBus</span> via HTTP/WebSocket. Reaproveita
+            <span class="b">lógica</span> (tipos de <span class="mono">src/shared</span>, hooks de
+            dados, i18n, stores não-desktop) —
+            <span class="b">re-faz a árvore de UI</span> (componentes nativos). Navegação: React
+            Navigation.
+          </p>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section>
+        <h2><span class="num">07</span>Arquitetura-alvo</h2>
+        <div class="h2sub">Cliente fino · API · runner host · dados hospedados</div>
+        <div class="target">
+          <div class="grid3">
+            <div class="tier">
+              <div class="th">📱 Mobile (RN)</div>
+              <div class="tb">comando + acompanhar</div>
+            </div>
+            <div class="tier">
+              <div class="th">🌐 Web (React)</div>
+              <div class="tb">app completo no browser</div>
+            </div>
+            <div class="tier">
+              <div class="th">🖥️ Desktop (Electron)</div>
+              <div class="tb">mantém IDE/terminal local</div>
+            </div>
+          </div>
+          <div class="arrow">
+            ↓ &nbsp; HTTPS + WebSocket (OrkestralApiClient / EventBus) &nbsp; ↓
+          </div>
+          <div class="tier">
+            <div class="th">
+              🚪 API Gateway / Auth <span class="badge b-bad" style="margin-left: auto">novo</span>
+            </div>
+            <div class="tb">
+              tRPC/REST gerado do <span class="mono">ipc-contract.ts</span> · usuários, sessões,
+              org/billing · WebSocket p/ os 36 eventos de stream
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="grid2">
+            <div class="tier">
+              <div class="th">
+                🗄️ Postgres <span class="badge b-warn" style="margin-left: auto">portar</span>
+              </div>
+              <div class="tb">
+                schema Drizzle já existe · + user_id, org, escopo por usuário · pgvector p/
+                embeddings
+              </div>
+            </div>
+            <div class="tier">
+              <div class="th">
+                ⚙️ Runner host / workspace
+                <span class="badge b-warn" style="margin-left: auto">extrair do main</span>
+              </div>
+              <div class="tb">
+                CLIs (claude/codex), git, repo, MCP server, schedulers · padrão = openclaw_gateway
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section>
+        <h2><span class="num">08</span>Roteiro sugerido</h2>
+        <div class="h2sub">Ordem que destrava mais cedo, com menor risco</div>
+        <div class="road">
+          <div class="phase">
+            <div class="pn">0</div>
+            <div>
+              <h4>Desacoplar a UI da IPC</h4>
+              <p>
+                Extrair <span class="mono">OrkestralApiClient</span> +
+                <span class="mono">OrkestralEventBus</span> (1 interface, impl IPC primeiro).
+                Refatorar os ~592 call-sites pra usar a interface via context.
+                <span class="b">Não muda comportamento</span> — só prepara terreno. Maior alavanca
+                isolada.
+              </p>
+              <div class="eta">pré-requisito de tudo</div>
+            </div>
+          </div>
+          <div class="phase">
+            <div class="pn">1</div>
+            <div>
+              <h4>Identidade + Postgres + secrets</h4>
+              <p>
+                Tabela de usuários, auth (Supabase já em uso), org acima de workspace. Portar schema
+                Drizzle SQLite→Postgres. Tirar tokens do <span class="mono">safeStorage</span> pra
+                um secret store de servidor.
+              </p>
+              <div class="eta">backend multi-usuário</div>
+            </div>
+          </div>
+          <div class="phase">
+            <div class="pn">2</div>
+            <div>
+              <h4>API Gateway (gerado do contrato)</h4>
+              <p>
+                tRPC/REST a partir de <span class="mono">ipc-contract.ts</span> + WebSocket pros
+                eventos. Impl HTTP do <span class="mono">OrkestralApiClient</span>. Web app passa a
+                rodar no browser falando com o gateway.
+              </p>
+              <div class="eta">web app vivo</div>
+            </div>
+          </div>
+          <div class="phase">
+            <div class="pn">3</div>
+            <div>
+              <h4>Runner host remoto</h4>
+              <p>
+                Empacotar o <span class="mono">main</span> (sem janela) como serviço: CLIs + git +
+                repo + MCP server + schedulers. Reusar o protocolo do
+                <span class="mono">openclaw_gateway</span>. Execução sai da máquina do dev.
+              </p>
+              <div class="eta">execução na nuvem</div>
+            </div>
+          </div>
+          <div class="phase">
+            <div class="pn">4</div>
+            <div>
+              <h4>App mobile (RN)</h4>
+              <p>
+                Subconjunto "comando + acompanhar" sobre o mesmo client/eventbus. Push
+                notifications. Deixa IDE/terminal/docker fora.
+              </p>
+              <div class="eta">iOS + Android</div>
+            </div>
+          </div>
+          <div class="phase">
+            <div class="pn">5</div>
+            <div>
+              <h4>MCP remoto + embeddings hospedados</h4>
+              <p>
+                Migrar catálogos pra MCP por URL (HTTP/SSE — infra já existe). Embeddings p/
+                pgvector + inferência hospedada no lugar do GGUF local.
+              </p>
+              <div class="eta">tirar peso da máquina</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="foot">
+        Gerado a partir de varredura do repositório · src/main · src/renderer · src/shared · ~138k
+        LOC · 2026-06-22
+      </div>
+    </div>
+  </body>
+</html>

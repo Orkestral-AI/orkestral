@@ -1,0 +1,103 @@
+{
+  "title": "Dashboard",
+  "overview": "Workspace overview",
+  "overviewNamed": "Overview of workspace \"{name}\"",
+  "noActiveWorkspace": "No active workspace.",
+  "loadError": "Couldn't load the dashboard. Try again.",
+  "stats": {
+    "openIssues": "Open issues",
+    "blocked": "Blocked",
+    "activeAgents": "Active agents",
+    "sessions": "Sessions",
+    "pausedHint": "{n} paused"
+  },
+  "sections": {
+    "issuesByStatus": "Issues by status",
+    "recentIssues": "Recent issues",
+    "recentConversations": "Recent conversations",
+    "agents": "Agents"
+  },
+  "actions": {
+    "viewAll": "View all",
+    "new": "New",
+    "viewAgents": "View agents"
+  },
+  "empty": {
+    "noIssues": "No issues yet — create the first one in Issues.",
+    "noConversations": "No conversations yet.",
+    "noAgents": "No agents in this workspace."
+  },
+  "status": {
+    "backlog": "Backlog",
+    "todo": "To do",
+    "in_progress": "In progress",
+    "in_review": "In review",
+    "blocked": "Blocked",
+    "done": "Done",
+    "cancelled": "Cancelled"
+  },
+  "relative": {
+    "now": "now",
+    "minutes": "{n}min",
+    "hours": "{n}h",
+    "days": "{n}d"
+  },
+  "home": {
+    "greeting": "What's on your mind today?",
+    "startError": "Couldn't start the conversation",
+    "workspaceOrAgentUnavailable": "Workspace or agent unavailable",
+    "askAgent": "Ask {name}…",
+    "askOrkestral": "Ask Orkestral…",
+    "channelsTeaser": "Chat with Orkestral from your favorite messaging apps",
+    "channelsDismiss": "Dismiss",
+    "channelsSoon": "Soon",
+    "suggestions": {
+      "memory": "Do you remember things across chats?",
+      "routines": "What are routines?",
+      "createIssue": "Create an issue to review the last PR",
+      "header": "A few suggestions to get started",
+      "refresh": "Refresh"
+    },
+    "objectiveSuggestions": {
+      "codeReview": "Review the open PRs and tell me what needs attention",
+      "codeBuild": "Break a new feature into issues and assign them to the team",
+      "bugfix": "Create an issue to investigate and fix a bug",
+      "architecture": "Propose the architecture for a new feature",
+      "refactor": "Plan a safe refactor of a module",
+      "performance": "Find performance bottlenecks and open issues for them",
+      "docs": "Generate documentation for part of the codebase",
+      "tests": "Create issues to cover the code with tests",
+      "security": "Run a security review of the project",
+      "cicd": "Set up or improve the CI/CD pipeline"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "description": "Find chats, issues, agents and docs in one place.",
+    "emptyTitle": "Global search",
+    "emptyDescription": "Full indexing arrives in Phase 5 (knowledge base)."
+  },
+  "economics": {
+    "title": "Execution economics",
+    "introPart1": "Premium models ",
+    "introPlan": "plan",
+    "introPart2": "; the local Forge model ",
+    "introExecute": "executes",
+    "introPart3": ". Premium is only triggered as a fallback. The numbers below are measured directly from real executions.",
+    "loadError": "Failed to load metrics",
+    "localExecutions": "Local executions (Forge)",
+    "localExecutionsHint": "Resolved without premium",
+    "escalations": "Escalations to premium",
+    "escalationsHint": "Fallback triggered",
+    "localSuccessRate": "Local success rate",
+    "localSuccessRateHint": "{local} of {total} executions",
+    "savedLabel": "Premium cost avoided",
+    "savedDetail": "{local} local resolutions × {cost} measured average premium cost per escalation.",
+    "savedNote": "Measured from real escalation costs (cost_usd from the stream). Premium-assisted resolutions are counted, with their assist cost discounted.",
+    "noCostData": "Not enough data yet: no premium escalation has a measured cost, so we can't compute savings honestly.",
+    "counterfactualLabel": "Estimated savings",
+    "counterfactualDetail": "the premium would have spent on the same work ({label}).",
+    "counterfactualNote": "Estimate: tokens the Forge processed locally × reference price. Premium was never triggered, so there is no real charge — this is what you would have spent.",
+    "noRuns": "No orchestrated executions recorded yet."
+  }
+}

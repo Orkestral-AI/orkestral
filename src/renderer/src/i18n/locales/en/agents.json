@@ -1,0 +1,469 @@
+{
+  "autonomy": {
+    "label": "Team autonomy",
+    "globalBadge": "Global",
+    "description": "A global setting for this workspace — controls how far the agent team runs on its own before asking for your approval in the Inbox.",
+    "low": "Cautious",
+    "lowDetail": "Every important change goes through you. Agents propose and wait for your approval in the Inbox before applying. Maximum control, slower pace.",
+    "medium": "Balanced",
+    "mediumDetail": "Agents review each other's work before finishing. You're only pinged in the Inbox for important decisions or when something fails. Recommended for everyday use.",
+    "high": "Autonomous",
+    "highDetail": "The team runs everything to the end on its own, without stopping for Inbox review. Great for firing off a task and coming back to it done. Use when you trust the team."
+  },
+  "list": {
+    "title": "Agents",
+    "subtitle": "Workspace agent team.",
+    "newAgent": "New agent",
+    "orchestratorCannotBeRemoved": "The Orchestrator cannot be removed.",
+    "removeAgentTitle": "Remove agent?",
+    "removeAgentConfirm": "Remove agent \"{name}\"?",
+    "tags": {
+      "orchestrator": "orchestrator"
+    },
+    "caps": {
+      "editFiles": "edits files",
+      "runCommands": "runs commands",
+      "createAgents": "hires agents",
+      "assignTasks": "assigns tasks"
+    },
+    "remove": "Remove",
+    "empty": {
+      "title": "No agents",
+      "description": "Create specialist agents to delegate tasks (review, build, docs, etc).",
+      "create": "Create agent"
+    }
+  },
+  "avatar": {
+    "alt": "Agent avatar",
+    "change": "Change avatar",
+    "edit": "Edit",
+    "choose": "Choose an avatar",
+    "shuffle": "Shuffle",
+    "credit": "toon-head style · DiceBear · generated locally"
+  },
+  "adapterFields": {
+    "chooseFile": "Choose",
+    "chooseFileTitle": "Choose file in Finder",
+    "fileFilters": {
+      "markdownText": "Markdown / text",
+      "allFiles": "All files"
+    }
+  },
+  "newDialog": {
+    "title": "Add agent",
+    "descriptionAskCeo": "We recommend letting the CEO configure it — they know the team and adjust permissions.",
+    "descriptionAdvanced": "Advanced configuration — all adapter, model and policy parameters.",
+    "askCeo": {
+      "nameLabel": "Agent name",
+      "namePlaceholder": "e.g. Frontend Lead",
+      "missionLabel": "Mission",
+      "missionHint": "Describe what this agent does — the CEO will use it to configure it.",
+      "missionPlaceholder": "e.g. Reviews frontend PRs (React/TS), enforces design standards, suggests refactors...",
+      "noCeoWarning": "No CEO configured in this workspace. Use advanced configuration to create the first agent manually.",
+      "talkingToCeo": "Talking to the CEO…",
+      "askCeoCreate": "Ask the CEO to create",
+      "configureManually": "I want to configure manually (advanced)",
+      "errors": {
+        "workspaceUndefined": "Workspace not defined",
+        "ceoNotFound": "CEO/Orchestrator not found",
+        "nameRequired": "Agent name is required"
+      },
+      "sessionTitle": "Create agent: {name}",
+      "prompt": {
+        "intro": "Please create a new agent named \"{name}\".",
+        "mission": "Mission: {mission}",
+        "instructions": "Suggest the appropriate adapter, model, capabilities and system prompt. When ready, use the agent creation tool."
+      }
+    },
+    "advanced": {
+      "nameLabel": "Agent name",
+      "namePlaceholder": "Agent name",
+      "titlePlaceholder": "Title (e.g. VP of Engineering)",
+      "general": "General",
+      "adapter": "Adapter",
+      "adapterType": "Adapter type",
+      "comingSoon": "(coming soon)",
+      "permissionsConfig": "Permissions & Configuration",
+      "command": "Command",
+      "commandHint": "Binary path or name (leave empty to use the adapter default).",
+      "providerOptions": "Provider options",
+      "primaryModel": "Primary Model",
+      "model": "Model",
+      "cheapModel": "Cheap Model",
+      "cheapModelHint": "Used when a run requests a cheap profile (summaries, etc). The primary model stays untouched.",
+      "thinkingEffort": "Thinking effort",
+      "effort": {
+        "auto": "Auto",
+        "minimal": "Minimal",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "xhigh": "X-High"
+      },
+      "enableChrome": "Enable Chrome",
+      "enableChromeHint": "Lets the agent open Chrome for web automation.",
+      "skipPermissions": "Skip permissions",
+      "skipPermissionsHint": "Bypass CLI approvals/sandbox (claude: --dangerously-skip-permissions, codex: --yolo).",
+      "maxTurns": "Max turns per run",
+      "instructionsFile": "Agent instructions file",
+      "instructionsFileHint": "Markdown file injected as initial context (e.g. AGENTS.md).",
+      "instructionsDirTitle": "Instructions folder",
+      "extraArgs": "Extra args (comma-separated)",
+      "extraArgsHint": "Extra arguments passed to the CLI on every run.",
+      "extraArgsPlaceholder": "e.g. --verbose, --foo=bar",
+      "envVars": "Environment variables",
+      "envVarsHint": "Variables injected into the CLI process. PAPERCLIP_* are automatic.",
+      "envType": {
+        "plain": "Plain",
+        "secret": "Secret"
+      },
+      "removeVar": "Remove",
+      "addVar": "+ Add variable",
+      "runPolicy": "Run Policy",
+      "heartbeatInterval": "Heartbeat on interval",
+      "heartbeatIntervalHint": "Keeps the CLI process alive between turns (faster, more memory).",
+      "capabilities": "Capabilities",
+      "capEditFiles": "Edits project files",
+      "capRunCommands": "Runs terminal commands",
+      "capCreateAgents": "Can hire other agents",
+      "capAssignTasks": "Assigns tasks",
+      "systemPrompt": "System prompt",
+      "systemPromptPlaceholder": "e.g. You are a frontend engineer specialized in React...",
+      "testAgent": "Test agent",
+      "creating": "Creating…",
+      "createAgent": "Create agent",
+      "unknownError": "Unknown error",
+      "errors": {
+        "workspaceUndefined": "Workspace not defined",
+        "nameRequired": "Name is required"
+      },
+      "adapterSearch": "Search adapter…"
+    },
+    "reportsTo": {
+      "label": "Reports to…",
+      "title": "Sets who this agent reports to in the hierarchy",
+      "header": "Reports to",
+      "noManager": "No manager",
+      "ceoRole": "CEO · Orchestrator"
+    }
+  },
+  "page": {
+    "loading": "Loading agent…",
+    "notFound": "Agent not found.",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "issues": "Issues",
+      "instructions": "Instructions",
+      "skills": "Skills",
+      "configuration": "Configuration",
+      "runs": "Runs",
+      "audit": "Audit"
+    },
+    "header": {
+      "working": "Working",
+      "orchestrator": "Orchestrator",
+      "runHeartbeat": "Run heartbeat",
+      "resume": "Resume",
+      "pause": "Pause",
+      "more": "More",
+      "copyAgentId": "Copy Agent ID",
+      "resetSessions": "Reset sessions",
+      "deleteAgent": "Delete agent",
+      "resetSessionsConfirm": "Delete all sessions of this agent? This cannot be undone.",
+      "deleteConfirm": "Delete agent \"{name}\"? All sessions, messages and runs will be permanently removed."
+    },
+    "status": {
+      "idle": "Idle",
+      "live": "Live",
+      "paused": "Paused",
+      "error": "Error"
+    },
+    "assignTask": {
+      "button": "Assign task",
+      "dialogTitle": "Assign task to {name}",
+      "placeholder": "What does this agent need to do?",
+      "priorityLabel": "Priority:",
+      "create": "Create task"
+    }
+  },
+  "dashboard": {
+    "stats": {
+      "runs14d": "Runs in the last 14d",
+      "successRate": "Success rate",
+      "avgTime": "Average time",
+      "lastHeartbeat": "Last heartbeat"
+    },
+    "lastRuns": {
+      "title": "Latest runs",
+      "hint": "Chat, code reviews and heartbeats — most recent first",
+      "emptyTitle": "No runs yet",
+      "emptyDescription": "Send a message in chat, run a code review or fire a heartbeat to get started."
+    },
+    "permissions": {
+      "title": "Permissions",
+      "hint": "What this agent can do in the workspace",
+      "createAgents": "Create agents",
+      "assignTasks": "Assign tasks",
+      "editFiles": "Edit files",
+      "runCommands": "Run commands"
+    }
+  },
+  "instructions": {
+    "files": "Files",
+    "createFile": "Create new file",
+    "entry": "Entry",
+    "unsaved": "Unsaved",
+    "deleteFile": "Delete file",
+    "deleteFileConfirm": "Delete {name}?",
+    "editorPlaceholder": "Write markdown here…",
+    "selectFile": "Select a file",
+    "newFilePlaceholder": "NAME.md",
+    "duplicateName": "A file with this name already exists."
+  },
+  "skills": {
+    "agentSkills": {
+      "title": "Agent skills",
+      "hint": "Attached skills are injected as extra context in the agent's prompt.",
+      "emptyTitle": "No skills attached",
+      "emptyDescription": "Attach a workspace skill below for it to appear in this agent's prompt.",
+      "detach": "Remove"
+    },
+    "available": {
+      "title": "Available in workspace",
+      "hint": "Skills created in /company/skills",
+      "emptyTitle": "No skills created",
+      "emptyDescription": "Go to Skills (sidebar) to create the workspace's first skill.",
+      "attached": "Attached",
+      "attach": "Attach"
+    },
+    "tabSkills": "Skills",
+    "tabMcps": "MCPs",
+    "use": "Use",
+    "inUse": "In use",
+    "kindSkill": "Skill",
+    "kindMcp": "MCP",
+    "noDescription": "No description",
+    "noContent": "No content",
+    "detailContent": "Content",
+    "detailConfig": "Configuration",
+    "emptySkillsTitle": "No skills in the workspace",
+    "emptySkillsDesc": "Create skills in Resources > Skills to use on this agent.",
+    "emptyMcpsTitle": "No MCPs in the workspace",
+    "emptyMcpsDesc": "Install MCPs in Resources > MCPs to assign to this agent."
+  },
+  "config": {
+    "nav": {
+      "agent": "Agent",
+      "runtime": "Runtime",
+      "access": "Access",
+      "warnBadge": "Caution"
+    },
+    "identity": {
+      "title": "Identity",
+      "hint": "Who this agent is and what it does",
+      "name": "Name",
+      "title2": "Title",
+      "title2Hint": "How the agent presents itself — e.g. VP of Engineering",
+      "title2Placeholder": "e.g. Frontend Lead",
+      "reportsTo": "Reports to",
+      "reportsToHint": "Defines the hierarchy between agents",
+      "noManager": "No manager (root)",
+      "capabilities": "Capabilities",
+      "capabilitiesHint": "Free-form description of what the agent does",
+      "capabilitiesPlaceholder": "Reviews frontend PRs, enforces design standards…"
+    },
+    "adapter": {
+      "title": "Adapter",
+      "hint": "Which model/CLI this agent uses to run",
+      "adapterType": "Adapter type",
+      "options": {
+        "claude": "Claude (local CLI)",
+        "codex": "Codex (local CLI)",
+        "gemini": "Gemini (local CLI)",
+        "orkestral": "Orkestral Forge (local model)"
+      }
+    },
+    "permsConfig": {
+      "title": "CLI Execution",
+      "hint": "Parameters that control how the CLI runs on each invocation",
+      "autonomy": "Team autonomy",
+      "autonomyHint": "How far the team runs on its own before asking for approval. Applies to the whole workspace (set on the CEO).",
+      "autonomyLow": "Cautious — ask approval",
+      "autonomyLowHint": "full review, escalates to you",
+      "autonomyMedium": "Balanced",
+      "autonomyMediumHint": "agent-to-agent review (default)",
+      "autonomyHigh": "Autonomous — fire and forget",
+      "autonomyHighHint": "runs and finishes on its own, no inbox",
+      "thinkingEffort": "Thinking effort",
+      "thinkingEffortHint": "How much reasoning the model should do before responding",
+      "bypassSandbox": "Bypass sandbox",
+      "bypassSandboxHint": "Passes approvals/sandbox bypass (claude: --dangerously-skip-permissions, codex: --yolo). Use with care.",
+      "enableSearch": "Enable search",
+      "enableSearchHint": "Enables the CLI's web search tool (if supported).",
+      "fastMode": "Fast mode",
+      "fastModeHint": "Uses the CLI's fastest mode (lower latency, less context).",
+      "extraArgs": "Extra args (comma-separated)",
+      "extraArgsHint": "Extra args passed to the CLI. e.g. --verbose, --foo=bar",
+      "extraArgsPlaceholder": "e.g. --verbose, --foo=bar",
+      "envVars": "Environment variables",
+      "envVarsHint": "KEY = name of the variable the process expects. Secret = value is encrypted and resolved at runtime.",
+      "addVar": "Add variable",
+      "timeout": "Timeout (sec)",
+      "timeoutHint": "Maximum time of an invocation. 0 = no limit.",
+      "grace": "Interrupt grace period (sec)",
+      "graceHint": "How long to wait after SIGTERM before sending SIGKILL."
+    },
+    "runPolicy": {
+      "title": "Run Policy",
+      "hint": "When and how the agent runs automatically",
+      "heartbeatInterval": "Heartbeat on interval",
+      "heartbeatIntervalHint": "When on, Orkestral runs the agent automatically per the interval below, using the HEARTBEAT.md prompt.",
+      "interval": "Interval (minutes)",
+      "intervalHint": "Minimum 1 minute.",
+      "advanced": "Advanced Run Policy",
+      "wakeOnDemand": "Wake on demand",
+      "wakeOnDemandHint": "Lets other agents wake this one on demand (callback).",
+      "cooldown": "Cooldown (sec)",
+      "cooldownHint": "Minimum interval between runs of the same agent.",
+      "maxConcurrent": "Max concurrent runs",
+      "maxConcurrentHint": "Maximum global simultaneous runs.",
+      "continueAfterMaxTurn": "Continue after max-turn stop",
+      "continueAfterMaxTurnHint": "When the CLI hits the turn limit, automatically fires a continuation.",
+      "continuationAttempts": "Continuation attempts",
+      "continuationDelay": "Continuation delay (sec)"
+    },
+    "perms": {
+      "title": "Permissions",
+      "hint": "What this agent can do in the workspace",
+      "createAgents": "Create agents",
+      "createAgentsHint": "This agent can hire other agents.",
+      "assignTasks": "Assign tasks",
+      "assignTasksHint": "Can delegate tasks to other agents.",
+      "editFiles": "Edit files",
+      "editFilesHint": "Can modify repository files.",
+      "runCommands": "Run commands",
+      "runCommandsHint": "Can run shell commands (dangerous — use with care)."
+    },
+    "saveBar": {
+      "unsaved": "Unsaved changes",
+      "discard": "Discard",
+      "save": "Save configuration"
+    },
+    "envRow": {
+      "markPlain": "Mark as Plain",
+      "markSecret": "Mark as Secret (encrypt)",
+      "seal": "Seal",
+      "removeVar": "Remove variable"
+    },
+    "model": {
+      "label": "Model",
+      "loading": "Loading available models…",
+      "error": "Could not list models — using default",
+      "available": "{n} models available via the {adapter} adapter",
+      "defaultOption": "Default (configured in the CLI)",
+      "customSuffix": "{value} (custom)"
+    }
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "hint": "Tokens to authenticate external calls to this agent",
+    "tokenCreated": "Token created — copy it now",
+    "copy": "Copy",
+    "dismiss": "Dismiss",
+    "tokenWarning": "This value won't be shown again. Keep it somewhere safe.",
+    "namePlaceholder": "Name (e.g. production)",
+    "create": "Create API Key",
+    "noActiveKeys": "No active keys.",
+    "neverUsed": "never used",
+    "usedRelative": "used {when}",
+    "revoke": "Revoke",
+    "revokeConfirm": "Revoke key \"{name}\"? This cannot be undone."
+  },
+  "issues": {
+    "status": {
+      "backlog": "Backlog",
+      "todo": "To do",
+      "in_progress": "In progress",
+      "in_review": "In review",
+      "blocked": "Blocked",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "assigned": "Assigned issues",
+    "summary": "· {open} open, {total} total",
+    "filterOpen": "Open",
+    "filterAll": "All",
+    "emptyActive": "{name} has no open issues. The heartbeat will check again soon.",
+    "emptyAll": "{name} hasn't been assigned to any issue yet."
+  },
+  "runs": {
+    "title": "Runs",
+    "hint": "Unified history: chat messages, code reviews and heartbeats",
+    "emptyTitle": "No runs yet",
+    "emptyDescription": "Send a message in chat, run a code review or fire a heartbeat — all of this agent's runs show up here.",
+    "histHintOne": "{n} run in history — chat, code reviews and heartbeats",
+    "histHintOther": "{n} runs in history — chat, code reviews and heartbeats",
+    "filterAll": "All",
+    "filterIssues": "Issues",
+    "filterChat": "Chat",
+    "filterCodeReviews": "Code reviews",
+    "filterHeartbeat": "Heartbeat",
+    "noneOfType": "No runs of this type.",
+    "status": {
+      "queued": "Queued",
+      "running": "Running",
+      "done": "OK",
+      "error": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "time": {
+    "now": "now",
+    "minutesAgo": "{n}min ago",
+    "hoursAgo": "{n}h ago",
+    "daysAgo": "{n}d ago"
+  },
+  "audit": {
+    "title": "Agent audit",
+    "subtitle": "Everything {name} did — grouped by issue.",
+    "empty": "No actions recorded yet.",
+    "emptyHint": "When this agent runs issues, every step (read, generate, tool, change, validate) shows up here.",
+    "noneForFilter": "No actions for this filter.",
+    "noIssue": "No issue",
+    "summary": "{actions} actions · {files} files changed · {tools} tools",
+    "sectionTitle": "Activity",
+    "sectionHint": "Everything the agent did, per issue — with the files it changed.",
+    "changedFiles": "Changed files",
+    "noDiff": "No diff in the working tree — changes may already be committed.",
+    "diffError": "Couldn't load the diff.",
+    "diffTruncated": "Diff truncated ({n} lines).",
+    "stats": {
+      "actions": "Actions",
+      "changes": "Changes",
+      "tools": "Tools",
+      "last": "Last activity"
+    },
+    "filters": {
+      "all": "All",
+      "patch": "Changes",
+      "tool": "Tools",
+      "read": "Reads",
+      "generate": "Generation",
+      "validate": "Validation",
+      "error": "Errors"
+    },
+    "kind": {
+      "run": "Run",
+      "plan": "Plan",
+      "retrieve": "Retrieve",
+      "read": "Read",
+      "generate": "Generate",
+      "tool": "Tool",
+      "patch": "Change",
+      "validate": "Validate",
+      "learn": "Learn",
+      "fallback": "Fallback",
+      "error": "Error"
+    }
+  }
+}

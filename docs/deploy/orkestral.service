@@ -1,0 +1,23 @@
+# docs/deploy/orkestral.service
+# Referência da unit systemd. O install.sh gera esta mesma unit automaticamente
+# (com os caminhos reais). Em Linux headless o Electron precisa de display
+# virtual: o wrapper /usr/local/bin/orkestral já embrulha o comando em `xvfb-run`.
+# ORKESTRAL_SECRET_KEY (e a auth do agente) vêm do EnvironmentFile — não hardcode
+# segredos aqui.
+[Unit]
+Description=Orkestral daemon
+After=network-online.target
+Wants=network-online.target
+
+# Sem User= => roda como root; userData = /root/.config/Orkestral.
+# O pareamento ('orkestral init') tem que rodar com o MESMO usuário (sudo),
+# senão a auth do canal cai em outro home e o serviço não a enxerga.
+[Service]
+Type=simple
+EnvironmentFile=/etc/orkestral/env
+ExecStart=/usr/local/bin/orkestral serve --no-tui
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

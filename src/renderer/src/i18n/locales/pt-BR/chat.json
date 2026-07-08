@@ -1,0 +1,444 @@
+{
+  "queue": {
+    "waiting": "Na fila",
+    "remove": "Remover da fila",
+    "followUp": "Follow-up na fila",
+    "attachment": "{n} anexo",
+    "attachmentPlural": "{n} anexos",
+    "steer": "Priorizar",
+    "steerHint": "Furar a fila — despachada primeiro quando o turno atual terminar (ele não é interrompido)",
+    "keepInQueue": "Manter este follow-up na fila normal",
+    "sendNow": "Enviar agora",
+    "sendNowRestart": "Reiniciar o turno atual agora com esta orientação adicionada. O contexto anterior é mantido; o trabalho em andamento para e permanece no histórico.",
+    "planningDecisions": "Suas respostas"
+  },
+  "analyzing": {
+    "title": "Analisando suas sources",
+    "subtitle": "Mapeando os repositórios pra montar o time certo — roda em background, já já proponho a contratação.",
+    "done": "Sources analisadas",
+    "steps": {
+      "scan": "Varredura",
+      "scanDetail": "{n} arquivos mapeados",
+      "tool": "Ferramenta",
+      "pages": "Páginas",
+      "pagesDetail": "{n} páginas de conhecimento criadas",
+      "ai": "Análise IA",
+      "aiDetail": "CEO lendo o repositório",
+      "index": "Indexação",
+      "indexDetail": "{c}/{t} segmentos vetorizados"
+    },
+    "tools": {
+      "reading": "Lendo arquivos",
+      "searching": "Procurando no código",
+      "creating": "Escrevendo página de conhecimento",
+      "querying": "Consultando a base de conhecimento",
+      "listing": "Listando as sources",
+      "running": "Rodando um comando",
+      "web": "Buscando na web"
+    },
+    "doneSubtitle": "Mapa do repositório pronto."
+  },
+  "input": {
+    "placeholder": "Pergunte ao Orkestral",
+    "placeholderDots": "Pergunte ao Orkestral…",
+    "attach": "Anexar",
+    "configure": "Configurar",
+    "planMode": "Modo Plan",
+    "dictate": "Ditar (voz)",
+    "dictateStop": "Parar ditado",
+    "dictateTranscribing": "Transcrevendo…",
+    "dictateInstall": "Instalar transcrição local",
+    "dictateError": "Falha no ditado",
+    "send": "Enviar",
+    "attachFile": "Anexar imagem ou arquivo (cole, arraste ou clique)",
+    "stop": "Parar",
+    "removeAttachment": "Remover anexo"
+  },
+  "voice": {
+    "installTitle": "Transcrição local não instalada",
+    "installDescription": "Instale o pacote de voz em Integrações para usar o ditado.",
+    "installAction": "Instalar"
+  },
+  "menu": {
+    "commands": "Comandos",
+    "mentionAgentOrFolder": "Mencionar agente, pasta ou arquivo",
+    "hintSlash": "↑↓ navega · Enter executa · Esc cancela",
+    "hintMention": "↑↓ navega · Tab insere · Esc cancela",
+    "noCommands": "Sem comandos",
+    "noResults": "Sem resultados",
+    "noResultsDefault": "Nenhum resultado"
+  },
+  "slash": {
+    "newLabel": "Nova conversa",
+    "newDescription": "Começa uma sessão limpa",
+    "clearLabel": "Limpar histórico",
+    "clearDescription": "Remove mensagens da sessão",
+    "helpLabel": "Ajuda",
+    "helpDescription": "Lista de comandos",
+    "skillBadge": "skill"
+  },
+  "mention": {
+    "noAdapter": "sem adapter",
+    "orchestratorSuffix": " · orquestrador"
+  },
+  "mode": {
+    "title": "Modo",
+    "build": "Build",
+    "plan": "Plan",
+    "buildDescription": "Implementa código diretamente",
+    "planDescription": "Discute antes de implementar"
+  },
+  "agentSelector": {
+    "title": "Agente",
+    "conversationAgent": "Agente desta conversa",
+    "chooseAgent": "Escolher agente",
+    "agentFallback": "Agente",
+    "noAdapter": "sem adapter",
+    "orchestratorSuffix": " · orquestrador"
+  },
+  "scope": {
+    "title": "Escopo",
+    "subtitle": "Qual contexto o agente recebe pra esse chat.",
+    "general": "Geral",
+    "noSources": "Sem sources",
+    "chooseScope": "Escolher escopo do chat",
+    "sourceCount": "{n} fonte",
+    "sourceCountPlural": "{n} fontes",
+    "selectedSources": "{n} fontes",
+    "generalNoSources": "Sem sources — adicione na sidebar",
+    "generalAllSources": "Considera todos os {n} source juntos",
+    "generalAllSourcesPlural": "Considera todos os {n} sources juntos",
+    "individualSources": "Sources individuais"
+  },
+  "attachment": {
+    "fallbackName": "arquivo",
+    "preview": "Abrir preview",
+    "download": "Baixar",
+    "openExternal": "Abrir em nova aba",
+    "close": "Fechar",
+    "tooLargeTitle": "Anexo muito grande",
+    "tooLargeDescription": "{name} excede o limite de 8 MB e não foi anexado."
+  },
+  "review": {
+    "tab": "Revisão",
+    "lastTurnChanges": "Alterações do último turno",
+    "noChanges": "Nenhuma alteração",
+    "noChangesHint": "Quando o agente editar arquivos no projeto, os diffs vão aparecer aqui pra você revisar."
+  },
+  "toolbar": {
+    "toggleSidebar": "Esconder/mostrar sidebar",
+    "newChat": "Novo chat",
+    "hideReview": "Esconder revisão",
+    "showReview": "Mostrar revisão",
+    "recentConversations": "Conversas recentes",
+    "searchConversations": "Buscar conversas…",
+    "noConversations": "Nenhuma conversa ainda"
+  },
+  "history": {
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "thisWeek": "Esta semana",
+    "earlier": "Anterior"
+  },
+  "message": {
+    "bootstrapPrompt": "{mention}pode propor um time inicial de agentes pra esse workspace?",
+    "hiringBlocksPrompt": "{mention}time aprovado — criando os agentes…",
+    "you": "Você",
+    "regenerate": "Regenerar",
+    "edit": "Editar",
+    "copy": "Copiar"
+  },
+  "hiring": {
+    "title": "Plano inicial de contratação",
+    "suggestedDecision": "Decisão sugerida: {decision}",
+    "alreadyHired": "Time já contratado — {n} agentes ativos na sidebar.",
+    "creating": "Criando…",
+    "approveAndCreate": "Aprovar e criar agentes",
+    "skipForNow": "Pular por agora",
+    "skipped": "Plano pulado por agora.",
+    "agentsCreated": "{n} agente criado — confira na sidebar.",
+    "agentsCreatedPlural": "{n} agentes criados — confira na sidebar.",
+    "noNewAgents": "Nenhum agente novo para criar.",
+    "approveHiring": "Aprovar contratação",
+    "planReceived": "Plano recebido. Revise e decida se deseja contratar agora.",
+    "modelForge": "Forge · local",
+    "modelPremium": "Premium",
+    "forgeTitle": "Esse time usa o Orkestral Forge (local, $0)",
+    "forgeDesc": "O modelo ainda não foi baixado. Até baixar, esses agentes rodam no premium ($). Baixe uma vez e vale pra todos os agentes locais.",
+    "forgePrivacy": "Ao baixar, suas interações ajudam a melhorar o Forge a cada dia. Seu código NUNCA sai da máquina — só como você lida com ele.",
+    "forgeDownload": "Baixar o Forge",
+    "forgeDownloadV2": "Baixar v2 (recomendado)",
+    "forgeDownloadV3": "Baixar v3 (7B, mais capaz)",
+    "forgeDownloadV1": "Baixar v1 (leve)",
+    "forgeBackground": "Baixando em background — fica pronto em instantes. Até lá esses agentes rodam no premium."
+  },
+  "questionWizard": {
+    "title": "Algumas decisões rápidas",
+    "stepOf": "Pergunta {n} de {total}",
+    "reviewSubtitle": "Revise suas respostas antes de enviar",
+    "writeYourOwn": "Escreva a sua",
+    "otherPlaceholder": "Escreva a sua resposta",
+    "back": "Voltar",
+    "next": "Próxima",
+    "review": "Revisar",
+    "skipAll": "Pular tudo",
+    "submit": "Enviar respostas",
+    "submitting": "Enviando…",
+    "noAnswer": "Sem resposta",
+    "submittedBadge": "Respostas enviadas. Montando o plano.",
+    "skippedBadge": "Pulado. Seguindo com o plano.",
+    "answersHeader": "Minhas decisões:",
+    "proceed": "Pode seguir e criar o plano.",
+    "skipMessage": "Pule as perguntas, use seu melhor julgamento e crie o plano.",
+    "respondLanguage": "Responda em português."
+  },
+  "workspace": {
+    "openLabel": "Abrir workspace",
+    "close": "Fechar workspace",
+    "tabPreview": "Preview",
+    "tabCode": "Código",
+    "tabIssues": "Issues",
+    "inExecution": "Em execução",
+    "inReview": "Em revisão",
+    "completed": "Concluídas",
+    "issuesOfChat": "Issues deste chat",
+    "completedSection": "Concluídas",
+    "noOpenIssues": "Nenhuma issue neste chat ainda.",
+    "noDetails": "Sem detalhes registrados nesta issue.",
+    "noLocalSource": "Sem fonte local neste workspace."
+  },
+  "preview": {
+    "title": "Preview",
+    "start": "Iniciar preview",
+    "starting": "Subindo o app…",
+    "stop": "Parar",
+    "reload": "Recarregar",
+    "expand": "Expandir",
+    "loading": "Carregando...",
+    "close": "Fechar"
+  },
+  "progress": {
+    "title": "Progresso",
+    "agentTrace": "Atividade do agente",
+    "knowledge": "Bases de conhecimento",
+    "files": "Arquivos referenciados",
+    "fileEdited": "editado",
+    "fileRead": "lido",
+    "copyPath": "Copiar caminho",
+    "copied": "Caminho copiado"
+  },
+  "notifyRun": {
+    "question": "Quer ser notificado quando {agent} responder?",
+    "action": "Notificar",
+    "dismiss": "Fechar aviso"
+  },
+  "issuePlan": {
+    "planLabel": "Plano · {n} issue",
+    "planLabelPlural": "Plano · {n} issues",
+    "epicTaskSummary": "{epics} épica · {tasks} tarefa",
+    "epicTaskSummaryEpicsPlural": "{epics} épicas · {tasks} tarefa",
+    "epicTaskSummaryTasksPlural": "{epics} épica · {tasks} tarefas",
+    "epicTaskSummaryBothPlural": "{epics} épicas · {tasks} tarefas",
+    "epicBadge": "Épica",
+    "footer": "Issues criadas no board — acompanhe o progresso em Issues.",
+    "awaitingApproval": "Aguardando sua aprovação pra executar",
+    "approveAndRun": "Aprovar e executar",
+    "approveAll": "Aprovar todos",
+    "approveSelected": "Aprovar selecionados ({n})",
+    "partOfPlanAbove": "↑ incluído no plano acima",
+    "selectWhich": "Selecione o que entra agora:",
+    "refine": "refinar",
+    "refinePlaceholder": "O que ajustar neste épico antes de executar?",
+    "willRefine": "será refinado",
+    "preparing": "Criando as issues do plano…",
+    "started": "{n} issue(s) em execução",
+    "modalStatus": "Status",
+    "modalPriority": "Prioridade",
+    "modalAssignee": "Responsável",
+    "modalNoDetail": "Esta issue ainda está sendo preparada — os detalhes aparecem assim que ela for criada.",
+    "modalOpenFull": "Abrir issue completa"
+  },
+  "codeChanges": {
+    "title": "{count} arquivo(s) editado(s)",
+    "undo": "Undo",
+    "review": "Review",
+    "showMore": "Mostrar mais {count} arquivo(s)",
+    "showLess": "Mostrar menos",
+    "undoConfirm": "Desfazer todas as alterações listadas neste card?",
+    "undoFailed": "Falha ao desfazer alterações.",
+    "undoSuccessTitle": "Alterações desfeitas",
+    "undoSuccessDescription": "Todas as modificações listadas em {source} foram revertidas.",
+    "undoDone": "Todas as modificações deste card foram desfeitas.",
+    "issueMeta": "Issue {key} · {title}"
+  },
+  "tools": {
+    "readingFile": "Lendo arquivo",
+    "writingFile": "Escrevendo arquivo",
+    "editingFile": "Editando arquivo",
+    "searchingFiles": "Buscando arquivos",
+    "searchingText": "Buscando texto",
+    "shellCommand": "Comando shell",
+    "tools": "Ferramentas",
+    "listingAgents": "Listando agentes",
+    "listingSources": "Listando sources",
+    "listingIssues": "Listando issues",
+    "creatingIssue": "Criando issue",
+    "updatingIssue": "Atualizando issue",
+    "updatingStatus": "Atualizando status",
+    "commentingIssue": "Comentando issue",
+    "readingIssue": "Lendo issue",
+    "workspaceContext": "Contexto do workspace",
+    "searchingKb": "Buscando KB",
+    "readingKbPage": "Lendo página KB",
+    "kbTree": "Árvore da KB",
+    "creatingKbPage": "Criando página KB",
+    "linkingPages": "Linkando páginas",
+    "backlinks": "Backlinks",
+    "shellLabel": "Shell",
+    "shellDefault": "Executa comando no shell",
+    "fileFallback": "arquivo",
+    "patternFallback": "padrão",
+    "filesFallback": "arquivos",
+    "grepWhere": " em {path}",
+    "toolSearchDescription": "procurou ferramentas",
+    "hintQuerying": "consultando…",
+    "hintReading": "lendo…"
+  },
+  "actions": {
+    "single": "{n} ação",
+    "plural": "{n} ações"
+  },
+  "typing": {
+    "thinking": "Pensando",
+    "processing": "Processando",
+    "working": "Trabalhando",
+    "analyzing": "Analisando",
+    "organizing": "Organizando",
+    "hiringHint": "Lendo o repositório pra propor o time",
+    "longHint": "O agente está lendo o repositório e montando o plano — em projetos grandes isso leva alguns minutos. Ele continua trabalhando; é só aguardar."
+  },
+  "activity": {
+    "searchingInFolder": "Buscando arquivos em {detail}",
+    "searchingFiles": "Buscando arquivos",
+    "reading": "Lendo {detail}",
+    "readingFiles": "Lendo arquivos",
+    "editing": "Editando {detail}",
+    "editingFiles": "Editando arquivos",
+    "running": "Rodando {detail}",
+    "runningCommand": "Rodando comando",
+    "searchingWebFor": "Buscando na web por {detail}",
+    "searchingWeb": "Buscando na web",
+    "searchingKbFor": "Buscando no conhecimento por {detail}",
+    "searchingKb": "Buscando no conhecimento",
+    "explored": "Explorou {parts}",
+    "file": "{n} arquivo",
+    "files": "{n} arquivos",
+    "search": "{n} busca",
+    "searches": "{n} buscas",
+    "ranCommand": "rodou {n} comando",
+    "ranCommands": "rodou {n} comandos",
+    "searchedWebOnce": "Buscou na web 1x",
+    "searchedWebMany": "Buscou na web {n}x",
+    "searchedKbOnce": "Buscou no conhecimento 1x",
+    "searchedKbMany": "Buscou no conhecimento {n}x",
+    "editedFile": "Editou {n} arquivo",
+    "editedFiles": "Editou {n} arquivos",
+    "editFailedOne": "{n} edição não aplicou (alvo não encontrado)",
+    "editFailedMany": "{n} edições não aplicaram (alvo não encontrado)"
+  },
+  "reasoning": {
+    "thinking": "Pensando…",
+    "thoughtForSeconds": "Raciocinou por {n}s",
+    "reasoning": "Raciocínio"
+  },
+  "sources": {
+    "consulting": "Consultando fontes…",
+    "used": "Usou",
+    "count": "{n} fonte",
+    "countPlural": "{n} fontes"
+  },
+  "code": {
+    "fallbackLang": "código",
+    "copied": "Copiado",
+    "copy": "Copiar"
+  },
+  "session": {
+    "loading": "Carregando conversa…",
+    "notFound": "Conversa não encontrada",
+    "sendErrorTitle": "Não foi possível enviar",
+    "viaWhatsapp": "via WhatsApp",
+    "viaChannel": "via {channel}",
+    "viaDiscord": "via Discord",
+    "channelContact": "Contato"
+  },
+  "help": {
+    "title": "Comandos do chat",
+    "body": "/new — nova sessão limpa · /clear — voltar ao início · /help — esta lista. Digite @ para mencionar um agente, pasta ou arquivo."
+  },
+  "workingTimer": {
+    "seconds": "Trabalhando há {s}s",
+    "minutes": "Trabalhando há {m}m {s}s"
+  },
+  "contextCompact": {
+    "compacting": "Compactando contexto…",
+    "compacted": "Contexto compactado",
+    "compactingHint": "Preparando um handoff estável para o Forge e o CLI manterem o mesmo contexto",
+    "summary": "{n} mensagens preservadas · contexto da sessão ao vivo protegido",
+    "summaryWithTime": "{n} mensagens preservadas · contexto da sessão ao vivo protegido · {time}"
+  },
+  "codeChangesBar": {
+    "fileChanged": "1 arquivo alterado",
+    "filesChanged": "{n} arquivos alterados",
+    "undo": "Desfazer",
+    "review": "Revisar",
+    "showMore": "Mostrar mais {n} arquivo(s)"
+  },
+  "questionsBanner": {
+    "title": "Perguntas sobre o projeto",
+    "subtitle": "Responda {n} definições pra eu montar o plano",
+    "answeredTitle": "Respostas enviadas",
+    "answeredSubtitle": "Ver as decisões que você enviou"
+  },
+  "planBanner": {
+    "title": "Plano aguardando sua aprovação",
+    "subtitle": "{title} — abra a issue pra revisar e aprovar",
+    "planReady": "Plano pronto pra aprovar",
+    "epicsAndTasks": "{epics} épicos · {tasks} tarefas",
+    "openIssue": "Ir até a issue",
+    "close": "Fechar",
+    "count": "{n} issue no plano",
+    "countPlural": "{n} issues no plano",
+    "approvedTitle": "Plano aprovado",
+    "approvedBody": "{n} issue(s) em execução.",
+    "approveError": "Não deu pra aprovar o plano"
+  },
+  "specialist": {
+    "title": "Criar {name} para {source}",
+    "viewKnowledge": "Ver Knowledge",
+    "approve": "Aprovar e criar",
+    "dismiss": "Dispensar"
+  },
+  "progressRow": {
+    "review": "Revisão",
+    "done": "Concluída",
+    "cancelled": "Cancelada",
+    "blocked": "Bloqueada",
+    "queued": "Na fila",
+    "running": "Executando",
+    "pending": "Pendente",
+    "planPrefix": "Plano · {title}"
+  },
+  "planExec": {
+    "running": "Plano em execução",
+    "done": "Plano concluído",
+    "blockedTitle": "{n} tarefa bloqueada",
+    "blockedTitlePlural": "{n} tarefas bloqueadas",
+    "blockedBody": "O Orkestral Forge não resolveu localmente e o fallback premium está desativado nas Configurações. Abra a issue pra destravar (ex.: rodar com premium ou dar mais contexto).",
+    "openBlocked": "Ver issue bloqueada"
+  },
+  "discardChanges": {
+    "successTitle": "Alterações desfeitas",
+    "successDescription": "Os arquivos editados por este plano foram revertidos.",
+    "errorTitle": "Não consegui desfazer tudo"
+  }
+}

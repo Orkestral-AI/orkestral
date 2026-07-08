@@ -1,0 +1,38 @@
+# Contexto do build Docker — mantém a imagem enxuta e o build reproduzível.
+# node_modules é reinstalado dentro da imagem (npm ci rebuilda os nativos pro
+# ABI do Electron da imagem, não do host).
+node_modules
+out
+dist
+release
+.vite
+.git
+.github
+.serena
+.superpowers
+.vscode
+.idea
+
+# Docs e material que não entra na imagem de runtime da CLI.
+docs
+benchmark
+
+# Artefatos de empacotamento desktop (não usados no runtime headless).
+resources/embeddings/models
+resources/embeddings/*.gguf
+*.icns
+*.ico
+*.dmg
+*.AppImage
+
+# Caches / logs / env local
+*.log
+.eslintcache
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+.DS_Store
+
+# Explícito: o entrypoint PRECISA entrar no build context (COPY no Dockerfile).
+!docker-entrypoint.sh

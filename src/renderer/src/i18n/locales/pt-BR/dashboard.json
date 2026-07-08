@@ -1,0 +1,103 @@
+{
+  "title": "Dashboard",
+  "overview": "Visão geral do workspace",
+  "overviewNamed": "Visão geral do workspace \"{name}\"",
+  "noActiveWorkspace": "Nenhum workspace ativo.",
+  "loadError": "Não consegui carregar o dashboard. Tente de novo.",
+  "stats": {
+    "openIssues": "Issues abertas",
+    "blocked": "Bloqueadas",
+    "activeAgents": "Agentes ativos",
+    "sessions": "Sessões",
+    "pausedHint": "{n} pausado(s)"
+  },
+  "sections": {
+    "issuesByStatus": "Issues por status",
+    "recentIssues": "Issues recentes",
+    "recentConversations": "Conversas recentes",
+    "agents": "Agentes"
+  },
+  "actions": {
+    "viewAll": "Ver todas",
+    "new": "Nova",
+    "viewAgents": "Ver agentes"
+  },
+  "empty": {
+    "noIssues": "Sem issues ainda — crie a primeira em Issues.",
+    "noConversations": "Nenhuma conversa ainda.",
+    "noAgents": "Sem agentes neste workspace."
+  },
+  "status": {
+    "backlog": "Backlog",
+    "todo": "A fazer",
+    "in_progress": "Em progresso",
+    "in_review": "Em review",
+    "blocked": "Bloqueado",
+    "done": "Concluído",
+    "cancelled": "Cancelado"
+  },
+  "relative": {
+    "now": "agora",
+    "minutes": "{n}min",
+    "hours": "{n}h",
+    "days": "{n}d"
+  },
+  "home": {
+    "greeting": "O que está na sua cabeça hoje?",
+    "startError": "Não foi possível iniciar a conversa",
+    "workspaceOrAgentUnavailable": "Workspace ou agente indisponível",
+    "askAgent": "Pergunte ao {name}…",
+    "askOrkestral": "Pergunte ao Orkestral…",
+    "channelsTeaser": "Converse com o Orkestral nos seus aplicativos de mensagem",
+    "channelsDismiss": "Dispensar",
+    "channelsSoon": "Em breve",
+    "suggestions": {
+      "memory": "Você lembra de coisas entre chats?",
+      "routines": "O que são rotinas?",
+      "createIssue": "Crie uma issue para revisar o último PR",
+      "header": "Algumas sugestões pra começar",
+      "refresh": "Atualizar"
+    },
+    "objectiveSuggestions": {
+      "codeReview": "Revise os PRs abertos e me diga o que precisa de atenção",
+      "codeBuild": "Quebre uma nova feature em issues e atribua ao time",
+      "bugfix": "Crie uma issue pra investigar e corrigir um bug",
+      "architecture": "Proponha a arquitetura de uma nova feature",
+      "refactor": "Planeje um refactor seguro de um módulo",
+      "performance": "Encontre gargalos de performance e abra issues",
+      "docs": "Gere documentação pra uma parte do código",
+      "tests": "Crie issues pra cobrir o código com testes",
+      "security": "Faça uma revisão de segurança do projeto",
+      "cicd": "Configure ou melhore o pipeline de CI/CD"
+    }
+  },
+  "search": {
+    "title": "Buscar",
+    "description": "Encontre chats, issues, agentes e docs em um só lugar.",
+    "emptyTitle": "Busca global",
+    "emptyDescription": "A indexação completa entra na Fase 5 (base de conhecimento)."
+  },
+  "economics": {
+    "title": "Economia de execução",
+    "introPart1": "Os modelos premium ",
+    "introPlan": "planejam",
+    "introPart2": "; o modelo local Forge ",
+    "introExecute": "executa",
+    "introPart3": ". Premium só é acionado como fallback. Os números abaixo são medidos diretamente das execuções reais.",
+    "loadError": "Falha ao carregar métricas",
+    "localExecutions": "Execuções locais (Forge)",
+    "localExecutionsHint": "Resolvidas sem premium",
+    "escalations": "Escalonamentos p/ premium",
+    "escalationsHint": "Fallback acionado",
+    "localSuccessRate": "Taxa de sucesso local",
+    "localSuccessRateHint": "{local} de {total} execuções",
+    "savedLabel": "Custo premium evitado",
+    "savedDetail": "{local} resoluções locais × {cost} de custo médio premium medido por escalação.",
+    "savedNote": "Medido a partir do custo real das escalações (cost_usd do stream). Resoluções com assist premium entram na conta, com o custo do assist descontado.",
+    "noCostData": "Ainda sem dados suficientes: nenhuma escalação premium tem custo medido, então não dá pra calcular a economia com honestidade.",
+    "counterfactualLabel": "Economia estimada",
+    "counterfactualDetail": "que o premium teria gastado pelo mesmo trabalho ({label}).",
+    "counterfactualNote": "Estimativa: tokens que o Forge processou local × preço de referência. O premium não foi acionado, então não há cobrança real — é o que você teria gasto.",
+    "noRuns": "Ainda não há execuções orquestradas registradas."
+  }
+}
