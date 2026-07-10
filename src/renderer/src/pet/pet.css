@@ -1,0 +1,45 @@
+/* Desktop pet — janela transparente; só o que pintar aqui existe na tela. */
+
+.pet-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  /* espaço acima do sprite reservado pros cards de notificação (Fase 2) */
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.pet-sprite {
+  width: 96px;
+  height: 96px;
+  /* segurar o sprite arrasta a janela inteira */
+  -webkit-app-region: drag;
+  cursor: grab;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  animation: pet-bob 3.2s ease-in-out infinite;
+}
+
+.pet-sprite svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* respiração idle bem sutil */
+@keyframes pet-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-sprite {
+    animation: none;
+  }
+}

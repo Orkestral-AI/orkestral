@@ -93,6 +93,10 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   performance: {
     preset: DEFAULT_PERFORMANCE_PRESET,
   },
+  pet: {
+    enabled: false,
+    bounds: null,
+  },
 };
 
 function nowIso(): string {
@@ -118,6 +122,7 @@ export class SettingsRepository {
       aiRouting: { ...DEFAULT_SETTINGS.aiRouting, ...(stored.aiRouting ?? {}) },
       knowledge: { ...DEFAULT_SETTINGS.knowledge, ...(stored.knowledge ?? {}) },
       performance: { ...DEFAULT_SETTINGS.performance, ...(stored.performance ?? {}) },
+      pet: { ...DEFAULT_SETTINGS.pet, ...(stored.pet ?? {}) },
     };
   }
 
@@ -131,6 +136,7 @@ export class SettingsRepository {
       aiRouting: { ...current.aiRouting, ...(patch.aiRouting ?? {}) },
       knowledge: { ...current.knowledge, ...(patch.knowledge ?? {}) },
       performance: { ...current.performance, ...(patch.performance ?? {}) },
+      pet: { ...current.pet, ...(patch.pet ?? {}) },
     };
     this.replace(next);
     return next;

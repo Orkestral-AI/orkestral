@@ -41,3 +41,4 @@ export const safeStorage = electron?.safeStorage;
 export const dialog = electron?.dialog;
 export const shell = electron?.shell;
 export const webContents = electron?.webContents;
+export const screen = electron?.screen;

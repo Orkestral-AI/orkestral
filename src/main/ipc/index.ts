@@ -28,6 +28,7 @@ import { registerDockerHandlers } from './handlers/docker';
 import { registerChannelHandlers } from './handlers/channels';
 import { registerEngineV2Handlers } from './handlers/engine-v2';
 import { registerPreviewHandlers } from './handlers/preview';
+import { registerPetHandlers } from './handlers/pet';
 
 /**
  * Registra todos os handlers IPC. Chamado uma vez no boot do main,
@@ -65,4 +66,5 @@ export function registerAllIpcHandlers(): void {
   registerChannelHandlers();
   registerEngineV2Handlers();
   registerPreviewHandlers();
+  registerPetHandlers();
 }

@@ -54,6 +54,8 @@ import {
 } from './services/cloud-auth';
 import { buildApplicationMenu } from './menu';
 import { fixPath } from './utils/fix-path';
+import { initPetWindowFromSettings, setPetEnabled, onPetEnabledChanged } from './pet/pet-window';
+import { SettingsRepository } from './db/repositories/settings.repo';
 
 // App empacotado aberto pelo Finder herda um PATH mínimo e não acha
 // `claude`/`codex`/`node` → `spawn ENOENT`. Corrige o PATH antes de qualquer
@@ -257,6 +259,40 @@ function trayIconImage(): Electron.NativeImage {
   return getAppIcon()?.resize({ width: 22, height: 22 }) ?? nativeImage.createEmpty();
 }
 
+/** Menu do Tray. Reconstruído a cada toggle do pet — o label
+ *  "Ocultar/Mostrar pet" reflete o estado persistido nas settings. */
+function buildTrayMenu(): Electron.Menu {
+  let petEnabled = false;
+  try {
+    petEnabled = new SettingsRepository().get().pet.enabled;
+  } catch {
+    // DB ainda não inicializado — trata como desligado
+  }
+  return Menu.buildFromTemplate([
+    { label: 'Abrir Orkestral', click: () => showMainWindow() },
+    {
+      label: petEnabled ? 'Ocultar pet' : 'Mostrar pet',
+      click: () => setPetEnabled(!petEnabled),
+    },
+    {
+      label: 'Preferências…',
+      click: () => {
+        showMainWindow();
+        mainWindowRef?.webContents.send('app:open-settings');
+      },
+    },
+    { label: 'Verificar atualizações…', click: () => void checkForUpdatesFromTray() },
+    { type: 'separator' },
+    {
+      label: 'Sair do Orkestral',
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      },
+    },
+  ]);
+}
+
 /** Cria o ícone na barra de menu (Tray) — é o que mantém o Orkestral acessível
  *  "na topbar" mesmo com a janela fechada/escondida. */
 function setupTray(): void {
@@ -265,27 +301,9 @@ function setupTray(): void {
   // Troca a logo na hora quando o usuário alterna dark/light no SO.
   nativeTheme.on('updated', () => tray?.setImage(trayIconImage()));
   tray.setToolTip('Orkestral');
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      { label: 'Abrir Orkestral', click: () => showMainWindow() },
-      {
-        label: 'Preferências…',
-        click: () => {
-          showMainWindow();
-          mainWindowRef?.webContents.send('app:open-settings');
-        },
-      },
-      { label: 'Verificar atualizações…', click: () => void checkForUpdatesFromTray() },
-      { type: 'separator' },
-      {
-        label: 'Sair do Orkestral',
-        click: () => {
-          isQuitting = true;
-          app.quit();
-        },
-      },
-    ]),
-  );
+  tray.setContextMenu(buildTrayMenu());
+  // Toggle do pet (Tray OU Configurações) → label do menu acompanha.
+  onPetEnabledChanged(() => tray?.setContextMenu(buildTrayMenu()));
 }
 
 // ─── Deep link (orkestral://) — login via Orkestral Cloud ─────────
@@ -362,6 +380,8 @@ app.whenReady().then(async () => {
     registerAllIpcHandlers();
     createWindow();
     setupTray();
+    // Desktop pet: recria se o usuário deixou ligado na última sessão.
+    initPetWindowFromSettings();
     // SMOKE do engine-v2 (gated por env): roda uma fatia viva com Forge real e loga. Dev-only.
     if (process.env.ENGINE_V2_SMOKE) {
       setTimeout(() => {

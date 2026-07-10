@@ -270,6 +270,20 @@ export type IpcContract = {
     request: { targetId: number; devtoolsId?: number; open: boolean };
     response: { ok: true };
   };
+  // ---- Desktop pet (docs/DESKTOP_PET.md) — janela flutuante always-on-top ----
+  /** Liga/desliga o click-through da janela do pet. O renderer do pet chama em
+   *  mouseenter/mouseleave das áreas interativas (sprite/cards); fora delas o
+   *  clique atravessa pro app de baixo. */
+  'pet:set-ignore-mouse': {
+    request: { ignore: boolean };
+    response: { ok: true };
+  };
+  /** Mostra/esconde o pet: persiste `pet.enabled` nas settings e cria/destrói a
+   *  janela. Usado pelo toggle das Configurações (o Tray chama o main direto). */
+  'pet:set-enabled': {
+    request: { enabled: boolean };
+    response: { enabled: boolean };
+  };
   /** Sai da sessão local sem apagar dados do workspace. */
   'app:logout': {
     request: void;
@@ -2487,6 +2501,8 @@ export const IPC_CHANNELS = [
   'window:toggle-maximize',
   'webview:set-devtools',
   'window:close',
+  'pet:set-ignore-mouse',
+  'pet:set-enabled',
   'app:logout',
   'app:webview-preload-path',
   'cloud:get-account',

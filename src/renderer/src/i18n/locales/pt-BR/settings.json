@@ -253,6 +253,8 @@
     "groupNotifications": "Notificações",
     "launchLabel": "Abrir o Orkestral ao ligar",
     "launchDescription": "Inicia automaticamente quando você faz login no computador.",
+    "petLabel": "Desktop pet",
+    "petDescription": "Mascote flutuante que fica por cima de tudo mostrando o status dos agentes.",
     "notificationsLabel": "Notificações",
     "notificationsDescription": "Mostrar notificações nativas do sistema.",
     "notificationSoundLabel": "Som de notificação",

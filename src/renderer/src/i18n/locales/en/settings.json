@@ -253,6 +253,8 @@
     "groupNotifications": "Notifications",
     "launchLabel": "Open Orkestral on startup",
     "launchDescription": "Starts automatically when you log into your computer.",
+    "petLabel": "Desktop pet",
+    "petDescription": "Floating mascot that stays on top of everything showing agent status.",
     "notificationsLabel": "Notifications",
     "notificationsDescription": "Show native system notifications.",
     "notificationSoundLabel": "Notification sound",

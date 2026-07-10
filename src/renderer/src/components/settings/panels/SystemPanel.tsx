@@ -18,6 +18,8 @@ export function SystemPanel() {
   const { t } = useT();
   const system = useSettingsStore((s) => s.settings?.system);
   const update = useSettingsStore((s) => s.updateSystem);
+  const petEnabled = useSettingsStore((s) => s.settings?.pet.enabled ?? false);
+  const hydrate = useSettingsStore((s) => s.hydrate);
 
   const launch = system?.launchOnStartup ?? false;
   const notifications = system?.notifications ?? true;
@@ -25,6 +27,13 @@ export function SystemPanel() {
   const inboxNotifications = system?.inboxNotifications ?? true;
   const timeFormat = system?.timeFormat ?? '24h';
   const showAppIn = system?.showAppIn ?? 'dock-and-status';
+
+  async function updatePetEnabled(enabled: boolean): Promise<void> {
+    // pet:set-enabled persiste E cria/destrói a janela no main; o hydrate
+    // ressincroniza a store com o estado canônico (o main é a fonte da verdade).
+    await window.orkestral['pet:set-enabled']({ enabled });
+    await hydrate();
+  }
 
   function updateNotifications(enabled: boolean): void {
     if (enabled && typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -49,6 +58,13 @@ export function SystemPanel() {
                 checked={launch}
                 onCheckedChange={(v) => void update({ launchOnStartup: v })}
               />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petLabel')}
+            description={t('settings.system.petDescription')}
+            right={
+              <Switch checked={petEnabled} onCheckedChange={(v) => void updatePetEnabled(v)} />
             }
           />
           <ToggleRow

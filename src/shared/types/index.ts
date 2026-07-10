@@ -1855,6 +1855,13 @@ export type SettingsRecord = {
   performance: {
     preset: PerformancePreset;
   };
+  /** Desktop pet — mascote flutuante always-on-top com status dos agentes (docs/DESKTOP_PET.md). */
+  pet: {
+    /** Pet visível. Opt-in: default false. */
+    enabled: boolean;
+    /** Última posição da janela do pet. null = canto inferior direito do display primário. */
+    bounds: { x: number; y: number; displayId: number } | null;
+  };
 };
 
 export type KbAnalysisJobStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
