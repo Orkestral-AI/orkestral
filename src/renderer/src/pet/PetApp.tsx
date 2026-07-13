@@ -51,6 +51,17 @@ function openTarget(hash: string | null, openSettings?: boolean): void {
   void window.orkestral['pet:open-target']({ hash, openSettings }).catch(() => {});
 }
 
+/** Resposta é markdown — preview vira texto corrido (sem cercas/símbolos). */
+const PREVIEW_MAX = 160;
+function cleanPreview(text: string): string {
+  return text
+    .replace(/```[\s\S]*?(```|$)/g, ' ')
+    .replace(/[#*_`>|-]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, PREVIEW_MAX);
+}
+
 /** Handlers de hover das áreas interativas (contador cobre sobreposição de zonas). */
 function useInteractiveZone(): { onMouseEnter: () => void; onMouseLeave: () => void } {
   const depth = useRef(0);
@@ -113,6 +124,29 @@ export function PetApp() {
     return window.orkestralEvents.onPetSettingsChanged((pet) => setSettings(pet));
   }, []);
 
+  // Nome do workspace nos cards — só faz sentido com MAIS DE UM workspace
+  // (com um só, a etiqueta é ruído). Mapa carregado no boot; id desconhecido
+  // (workspace criado depois) dispara refresh pro próximo card.
+  const workspaceNames = useRef(new Map<string, string>());
+  const loadWorkspaces = useCallback(() => {
+    void window.orkestral['workspace:list']()
+      .then((list) => {
+        workspaceNames.current = new Map(list.map((w) => [w.id, w.name]));
+      })
+      .catch(() => {});
+  }, []);
+  useEffect(() => loadWorkspaces(), [loadWorkspaces]);
+
+  const workspaceMeta = useCallback(
+    (id: string | null | undefined): string | undefined => {
+      if (!id) return undefined;
+      if (!workspaceNames.current.has(id)) loadWorkspaces();
+      if (workspaceNames.current.size <= 1) return undefined;
+      return workspaceNames.current.get(id);
+    },
+    [loadWorkspaces],
+  );
+
   // fonte de status: execuções de issue (started/finished/error)
   const settingsRef = useRef<PetSettings | null>(null);
   settingsRef.current = settings;
@@ -135,6 +169,7 @@ export function PetApp() {
                 : t.executionDone,
               hash: `#/issues/${event.issueKey}`,
               sticky: false,
+              meta: workspaceMeta(event.workspaceId),
             },
             s,
           );
@@ -151,6 +186,7 @@ export function PetApp() {
               description: event.error ?? t.executionFailed,
               hash: `#/issues/${event.issueKey}`,
               sticky: true,
+              meta: workspaceMeta(event.workspaceId),
             },
             s,
           );
@@ -164,6 +200,11 @@ export function PetApp() {
   // error (x_x + card sticky). `synthetic` é espelho de execução de issue e é
   // IGNORADO (já contamos pelo issue:execution-event — contaria dobrado).
   const chatRunSessions = useRef(new Map<string, string>());
+  /** Título + workspace da sessão, buscados 1x por sessão (session:get traz as
+   *  mensagens junto — pesado pra repetir; o cache evita re-fetch por resposta). */
+  const sessionInfo = useRef(new Map<string, { workspaceId: string; title: string }>());
+  /** Preview: acumula os text-delta do stream até o cap (resto é descartado). */
+  const previewByRun = useRef(new Map<string, string>());
   useEffect(() => {
     return window.orkestralEvents.onChatStream((event) => {
       const s = settingsRef.current;
@@ -171,10 +212,35 @@ export function PetApp() {
         if (event.synthetic) return;
         chatRunSessions.current.set(event.runId, event.sessionId);
         dispatch({ kind: 'exec-started', id: `chat-${event.runId}` });
+        if (!sessionInfo.current.has(event.sessionId)) {
+          const sessionId = event.sessionId;
+          void window.orkestral['session:get']({ sessionId })
+            .then((res) => {
+              if (res) {
+                sessionInfo.current.set(sessionId, {
+                  workspaceId: res.session.workspaceId,
+                  title: res.session.title,
+                });
+              }
+            })
+            .catch(() => {});
+        }
+      } else if (event.type === 'text-delta') {
+        if (!chatRunSessions.current.has(event.runId)) return;
+        const prev = previewByRun.current.get(event.runId) ?? '';
+        if (prev.length < PREVIEW_MAX) {
+          previewByRun.current.set(event.runId, prev + event.delta);
+        }
+      } else if (event.type === 'text-set') {
+        if (!chatRunSessions.current.has(event.runId)) return;
+        previewByRun.current.set(event.runId, event.text.slice(0, PREVIEW_MAX * 2));
       } else if (event.type === 'message-end') {
         const sessionId = chatRunSessions.current.get(event.runId);
         if (!sessionId) return; // synthetic (ou start que não vimos)
         chatRunSessions.current.delete(event.runId);
+        const preview = cleanPreview(previewByRun.current.get(event.runId) ?? '');
+        previewByRun.current.delete(event.runId);
+        const info = sessionInfo.current.get(sessionId);
         if (event.status === 'error') {
           dispatch({ kind: 'exec-error', id: `chat-${event.runId}` });
           if (s?.notifications?.execution) {
@@ -183,9 +249,11 @@ export function PetApp() {
                 id: `chat-${event.runId}`,
                 tone: 'error',
                 source: 'session',
-                title: t.chatFailed,
+                title: info?.title || t.chatFailed,
+                description: info?.title ? t.chatFailed : undefined,
                 hash: `#/session/${sessionId}`,
                 sticky: true,
+                meta: workspaceMeta(info?.workspaceId),
               },
               s,
             );
@@ -198,10 +266,11 @@ export function PetApp() {
                 id: `chat-${event.runId}`,
                 tone: 'success',
                 source: 'session',
-                title: t.chatDone,
-                description: t.chatDoneDescription,
+                title: info?.title || t.chatDone,
+                description: preview || t.chatDoneDescription,
                 hash: `#/session/${sessionId}`,
                 sticky: false,
+                meta: workspaceMeta(info?.workspaceId),
               },
               s,
             );
@@ -212,7 +281,7 @@ export function PetApp() {
         }
       }
     });
-  }, [dispatch, pushCard, t]);
+  }, [dispatch, pushCard, t, workspaceMeta]);
 
   // sessão de chat preparada em background
   useEffect(() => {
@@ -228,11 +297,12 @@ export function PetApp() {
           description: t.sessionReadyDescription,
           hash: `#/session/${event.sessionId}`,
           sticky: false,
+          meta: workspaceMeta(event.workspaceId),
         },
         s,
       );
     });
-  }, [pushCard, t]);
+  }, [pushCard, t, workspaceMeta]);
 
   // proposta nova no inbox → estado attention + card (opt-in)
   useEffect(() => {
@@ -249,11 +319,12 @@ export function PetApp() {
           description: event.sourceLabel,
           hash: '#/inbox',
           sticky: false,
+          meta: workspaceMeta(event.workspaceId),
         },
         s,
       );
     });
-  }, [dispatch, pushCard, t]);
+  }, [dispatch, pushCard, t, workspaceMeta]);
 
   // atualização do app baixada
   useEffect(() => {
@@ -406,6 +477,7 @@ export function PetApp() {
                   {card.description && (
                     <div className="pet-card-description">{card.description}</div>
                   )}
+                  {card.meta && <div className="pet-card-meta">{card.meta}</div>}
                 </div>
                 <button
                   type="button"

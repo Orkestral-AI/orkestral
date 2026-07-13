@@ -16,6 +16,8 @@ export interface PetCard {
   description?: string;
   /** Rota (hash do HashRouter) aberta no clique. null = só focar o app. */
   hash: string | null;
+  /** Etiqueta de contexto (nome do workspace). Omitida quando só há 1 workspace. */
+  meta?: string;
   /** true = não expira sozinho (erros). */
   sticky: boolean;
   /** Timestamp (ms) em que expira. Ignorado quando sticky. */

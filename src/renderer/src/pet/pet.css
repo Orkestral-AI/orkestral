@@ -139,6 +139,19 @@
   overflow: hidden;
 }
 
+/* etiqueta de contexto (workspace) — só aparece com 2+ workspaces */
+.pet-card-meta {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b5cf6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pet-card-dismiss {
   flex-shrink: 0;
   width: 22px;
