@@ -97,7 +97,7 @@ const DEFAULT_SETTINGS: SettingsRecord = {
     enabled: false,
     bounds: null,
     collapsed: false,
-    size: 'md',
+    size: 'sm',
     sound: true,
     doNotDisturb: false,
     notifications: {

@@ -468,17 +468,23 @@ export function PetApp() {
     .join(' ');
 
   // Janela abraça o conteúdo: mede o que está na tela e pede o tamanho pro
-  // main (âncora inferior-direita). Menu é absolute (fora do fluxo) — reserva
-  // altura fixa quando aberto.
+  // main (âncora inferior-direita). O menu é absolute (fora do fluxo) — entra
+  // na conta MEDIDO de verdade (largura E altura), senão a janela fica na
+  // largura do boneco e corta o dropdown.
   const contentRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    void window.orkestral['pet:resize']({
-      width: Math.ceil(rect.width) + 24,
-      height: Math.ceil(rect.height) + 24 + (menuOpen ? 176 : 0),
-    }).catch(() => {});
+    let width = Math.ceil(rect.width);
+    let height = Math.ceil(rect.height);
+    const menu = document.querySelector('.pet-menu');
+    if (menu) {
+      const m = menu.getBoundingClientRect();
+      width = Math.max(width, Math.ceil(m.width) + 8);
+      height += Math.ceil(m.height) + 8;
+    }
+    void window.orkestral['pet:resize']({ width: width + 24, height: height + 24 }).catch(() => {});
   }, [shown.length, queued, collapsed, menuOpen, settings?.size, activeCount]);
 
   return (
