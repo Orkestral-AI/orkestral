@@ -1,5 +1,5 @@
 import { registerHandler } from '../register';
-import { setPetIgnoreMouse, setPetEnabled } from '../../pet/pet-window';
+import { setPetIgnoreMouse, setPetEnabled, openTargetFromPet } from '../../pet/pet-window';
 
 /**
  * Handlers do desktop pet (docs/DESKTOP_PET.md). Ambos são desktop-only
@@ -18,5 +18,11 @@ export function registerPetHandlers(): void {
   registerHandler('pet:set-enabled', (req) => {
     setPetEnabled(req.enabled);
     return { enabled: req.enabled };
+  });
+
+  // Clique num card/menu do pet → foca o app e navega/abre Configurações.
+  registerHandler('pet:open-target', (req) => {
+    openTargetFromPet(req.hash, req.openSettings);
+    return { ok: true as const };
   });
 }

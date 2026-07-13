@@ -2,8 +2,9 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { is } from '@electron-toolkit/utils';
 import type { BrowserWindow as ElectronBrowserWindow } from 'electron';
-import { BrowserWindow, screen } from '../platform/electron';
+import { app, BrowserWindow, screen } from '../platform/electron';
 import { SettingsRepository } from '../db/repositories/settings.repo';
+import type { SettingsRecord } from '../../shared/types';
 
 // Mesmo polyfill do index.ts: o main é ESM e não tem __dirname nativo.
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -172,6 +173,38 @@ export function setPetEnabled(enabled: boolean): void {
   if (enabled) createPetWindow();
   else destroyPetWindow();
   enabledListener?.(enabled);
+}
+
+/**
+ * Clique num card/menu do pet: traz a janela principal pro foreground e manda
+ * o renderer principal navegar (`app:navigate`) e/ou abrir as Configurações
+ * (`app:open-settings` — mesmo evento que o Tray usa). Best-effort, nunca lança.
+ */
+export function openTargetFromPet(hash: string | null, openSettings?: boolean): void {
+  if (!BrowserWindow) return;
+  try {
+    const petId = petWindowRef && !petWindowRef.isDestroyed() ? petWindowRef.id : null;
+    const win = BrowserWindow.getAllWindows().find((w) => !w.isDestroyed() && w.id !== petId);
+    if (!win) return;
+    if (win.isMinimized()) win.restore();
+    win.show();
+    win.focus();
+    if (process.platform === 'darwin') {
+      void app?.dock?.show().catch(() => {});
+      app?.focus({ steal: true });
+    }
+    if (hash) win.webContents.send('app:navigate', { hash });
+    if (openSettings) win.webContents.send('app:open-settings');
+  } catch {
+    // ignore
+  }
+}
+
+/** Settings mudaram (qualquer settings:update): avisa o renderer do pet pra
+ *  aplicar tamanho/som/filtros ao vivo. Send direcionado — só o pet recebe. */
+export function notifyPetSettingsChanged(record: SettingsRecord): void {
+  if (!isPetWindowOpen()) return;
+  petWindowRef!.webContents.send('pet:settings-changed', record.pet);
 }
 
 /** Boot: cria o pet se o usuário deixou ligado na última sessão. */

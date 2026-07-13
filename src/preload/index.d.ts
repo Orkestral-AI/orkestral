@@ -12,6 +12,7 @@ import type {
   VoiceInstallEvent,
   IssueExecutionEvent,
   ChannelAccountSnapshot,
+  SettingsRecord,
 } from '../shared/types';
 
 export interface IssuesChangedEvent {
@@ -108,6 +109,10 @@ export interface OrkestralEvents {
   onTeamsLoginCode: (listener: (event: { code: string; url: string }) => void) => () => void;
   /** Tray (barra de menu) "Preferências…" → abre as Configurações no renderer. */
   onOpenSettings: (listener: () => void) => () => void;
+  /** Pet pediu navegação (clique num card) → setar window.location.hash. */
+  onAppNavigate: (listener: (event: { hash: string }) => void) => () => void;
+  /** Settings mudaram — send direcionado pro renderer do PET (aplica ao vivo). */
+  onPetSettingsChanged: (listener: (event: SettingsRecord['pet']) => void) => () => void;
 }
 
 declare global {

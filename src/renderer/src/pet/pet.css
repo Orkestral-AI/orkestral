@@ -1,4 +1,5 @@
-/* Desktop pet — janela transparente; só o que pintar aqui existe na tela. */
+/* Desktop pet — janela transparente; só o que pintar aqui existe na tela.
+ * Estados via classe no stage: .pet--idle/--working/--done/--error/--attention */
 
 .pet-root {
   height: 100%;
@@ -6,40 +7,445 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  /* espaço acima do sprite reservado pros cards de notificação (Fase 2) */
+  gap: 8px;
   padding: 12px;
   box-sizing: border-box;
 }
 
-.pet-sprite {
-  width: 96px;
-  height: 96px;
-  /* segurar o sprite arrasta a janela inteira */
+/* ─── Dock (menu + sprite lado a lado, ancorado no canto) ─────── */
+
+.pet-dock {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.pet-menu-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  -webkit-app-region: no-drag;
+}
+
+.pet-menu-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 181, 253, 0.25);
+  background: #17181b;
+  color: #a1a1aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.pet-menu-btn:hover {
+  color: #f4f4f5;
+  border-color: rgba(196, 181, 253, 0.5);
+}
+
+.pet-menu {
+  position: absolute;
+  bottom: 32px;
+  right: 0;
+  min-width: 180px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #17181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 10;
+}
+
+.pet-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #d4d4d8;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pet-menu button:hover {
+  background: rgba(124, 58, 237, 0.18);
+  color: #f4f4f5;
+}
+
+/* ─── Cards de notificação ────────────────────────────────────── */
+
+.pet-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.pet-cards-queued {
+  font-size: 11px;
+  color: #71717a;
+  padding-right: 4px;
+}
+
+.pet-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  max-width: 336px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #17181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  animation: pet-card-in 0.22s ease;
+}
+
+.pet-card:hover {
+  border-color: rgba(196, 181, 253, 0.4);
+}
+
+.pet-card-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pet-card--success .pet-card-icon {
+  color: #4ade80;
+}
+.pet-card--error .pet-card-icon {
+  color: #f87171;
+}
+.pet-card--info .pet-card-icon {
+  color: #a78bfa;
+}
+
+.pet-card--error {
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.pet-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pet-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f4f4f5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-card-description {
+  font-size: 12px;
+  color: #a1a1aa;
+  margin-top: 1px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pet-card-dismiss {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #71717a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pet-card-dismiss:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f4f5;
+}
+
+@keyframes pet-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Stage (sprite + badge) ─────────────────────────────────── */
+
+.pet-stage {
+  position: relative;
+  width: 108px;
+  /* segurar o boneco arrasta a janela inteira */
   -webkit-app-region: drag;
   cursor: grab;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+}
+
+.pet-stage--sm {
+  width: 84px;
+}
+
+.pet-stage svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* contador de agentes ativos */
+.pet-badge {
+  position: absolute;
+  top: -2px;
+  right: 2px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: #7c3aed;
+  border: 2px solid #0e0f10;
+  color: #f5f3ff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-sizing: border-box;
+  -webkit-app-region: no-drag;
+}
+
+/* ─── Corpo: bob de levitação (sombra compensa no contra-tempo) ─ */
+
+.pet-body,
+.pet-shard {
+  will-change: transform;
+}
+
+.pet--idle .pet-body {
   animation: pet-bob 3.2s ease-in-out infinite;
 }
-
-.pet-sprite svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+.pet--idle .pet-shadow {
+  animation: pet-shadow-bob 3.2s ease-in-out infinite;
+}
+.pet--idle .pet-shard--left {
+  animation: pet-bob 3.2s ease-in-out -0.4s infinite;
+}
+.pet--idle .pet-shard--right {
+  animation: pet-bob 3.2s ease-in-out -0.8s infinite;
 }
 
-/* respiração idle bem sutil */
+/* piscada: some por 2 frames a cada ~4s */
+.pet-eyes--blink {
+  animation: pet-blink 4.4s step-end infinite;
+  transform-origin: 60px 58px;
+}
+
+/* ─── Working: bob acelerado, shards orbitam, glints faíscam ──── */
+
+.pet--working .pet-body {
+  animation: pet-bob 1.6s ease-in-out infinite;
+}
+.pet--working .pet-shadow {
+  animation: pet-shadow-bob 1.6s ease-in-out infinite;
+}
+.pet--working .pet-shard--left {
+  animation: pet-shard-orbit 1.2s ease-in-out infinite;
+}
+.pet--working .pet-shard--right {
+  animation: pet-shard-orbit 1.2s ease-in-out -0.6s infinite;
+}
+.pet--working .pet-glints polygon {
+  animation: pet-glint 1.6s ease-in-out infinite;
+}
+.pet--working .pet-glints polygon:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.pet--working .pet-glints polygon:nth-child(3) {
+  animation-delay: 1s;
+}
+
+/* ─── Done: pulinho de celebração ─────────────────────────────── */
+
+.pet--done .pet-body {
+  animation: pet-hop 0.65s cubic-bezier(0.28, 1.6, 0.5, 1) 2;
+}
+.pet--done .pet-shard--left,
+.pet--done .pet-shard--right {
+  animation: pet-hop 0.65s cubic-bezier(0.28, 1.6, 0.5, 1) -0.1s 2;
+}
+
+/* ─── Error: treme uma vez e para (sem bob — "desligado") ─────── */
+
+.pet--error .pet-body {
+  animation: pet-shake 0.5s ease-in-out 1;
+}
+.pet--error .pet-shard--left,
+.pet--error .pet-shard--right {
+  transform: translateY(8px) rotate(28deg);
+  transition: transform 0.4s ease;
+}
+.pet--error .pet-shadow {
+  opacity: 0.3;
+}
+
+/* ─── Attention: aceno lateral discreto ───────────────────────── */
+
+.pet--attention .pet-body {
+  animation: pet-wiggle 2.4s ease-in-out infinite;
+  transform-origin: 60px 104px;
+}
+.pet--attention .pet-shadow {
+  animation: pet-shadow-bob 2.4s ease-in-out infinite;
+}
+
+/* ─── Easter egg: clique rápido 3x → pirueta ──────────────────── */
+
+.pet--spin .pet-body {
+  animation: pet-spin 0.8s cubic-bezier(0.35, 0, 0.25, 1) 1;
+  transform-origin: 60px 60px;
+}
+
+/* ─── Keyframes ───────────────────────────────────────────────── */
+
 @keyframes pet-bob {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+  }
+}
+
+/* sombra encolhe quando o corpo sobe */
+@keyframes pet-shadow-bob {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(0.85);
+    opacity: 0.38;
+  }
+}
+
+@keyframes pet-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  94%,
+  98% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes pet-shard-orbit {
+  0%,
+  100% {
+    transform: translateY(-8px) rotate(-14deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(14deg);
+  }
+}
+
+@keyframes pet-glint {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pet-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  30% {
+    transform: translateY(2px) scale(1.06, 0.92);
+  }
+  60% {
+    transform: translateY(-12px) scale(0.96, 1.05);
+  }
+}
+
+@keyframes pet-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pet-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(-4deg);
+  }
+  30% {
+    transform: rotate(4deg);
+  }
+  45% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pet-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pet-sprite {
-    animation: none;
+  .pet-body,
+  .pet-shard,
+  .pet-shadow,
+  .pet-eyes--blink,
+  .pet-glints polygon {
+    animation: none !important;
+    transition: none !important;
   }
 }

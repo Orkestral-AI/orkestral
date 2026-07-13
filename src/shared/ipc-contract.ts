@@ -284,6 +284,13 @@ export type IpcContract = {
     request: { enabled: boolean };
     response: { enabled: boolean };
   };
+  /** Clique num card/menu do pet: foca a janela principal e navega (push
+   *  `app:navigate` com o hash) e/ou abre as Configurações (`app:open-settings`).
+   *  hash null = só focar o app. */
+  'pet:open-target': {
+    request: { hash: string | null; openSettings?: boolean };
+    response: { ok: true };
+  };
   /** Sai da sessão local sem apagar dados do workspace. */
   'app:logout': {
     request: void;
@@ -2503,6 +2510,7 @@ export const IPC_CHANNELS = [
   'window:close',
   'pet:set-ignore-mouse',
   'pet:set-enabled',
+  'pet:open-target',
   'app:logout',
   'app:webview-preload-path',
   'cloud:get-account',

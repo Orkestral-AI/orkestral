@@ -104,8 +104,10 @@ O pet **assina eventos que já existem** — nada novo no motor:
 | `inbox:proposal-created` | Estado `attention` + card (opt-in) |
 | `update:downloaded` | Card "atualização disponível" |
 
-Hidratação ao abrir: invoke `agent:get-activity-stats` (já existe) pra saber quantas
-execuções estão ativas antes do primeiro push chegar.
+Hidratação ao abrir: **não há canal de "execuções ativas agora"** (`agent:get-activity-stats`
+é estatística histórica por agente — premissa original do spec estava errada). O pet abre
+em idle e converge no primeiro evento; mesma fonte de verdade do `agentStatusStore`, que
+também só vive de eventos.
 
 A lógica evento → estado do sprite é uma **função pura** (`derivePetState(events)`) em
 `src/renderer/src/pet/pet-state.ts` — testável com vitest (config node-only do repo).
@@ -171,8 +173,8 @@ canais `pet:*`; typecheck verde.
 
 Sprite reflete a realidade dos agentes.
 
-- Assinatura de `issue:execution-event` + hidratação via `agent:get-activity-stats`.
-- `derivePetState()` pura + testes vitest.
+- Assinatura de `issue:execution-event` (sem hidratação — ver "Fonte de status").
+- `reducePetState()`/`derivePetVisual()` puras + testes vitest.
 - Estados idle/working/done/error com badge de contagem (sem animação rica ainda —
   troca de cor/expressão basta).
 
@@ -194,7 +196,9 @@ certa; colapso persiste.
 
 ### Fase 3 — Arte e personalidade
 
-- Sprite sheet pixel art (idle/working/done/error/attention, 4–8 frames por estado).
+- Sprite = **vetor facetado** (decisão revisada: em vez de sprite sheet pixel art, o pet é
+  uma criatura de cristal low-poly na linguagem do logo — SVG + animações CSS, zero asset
+  binário, nítido em qualquer escala).
 - Micro-interações: hover, clique, transições entre estados.
 - Estado `attention` (inbox) com aceno.
 - Respeitar `prefers-reduced-motion`.
@@ -225,7 +229,7 @@ estável).
 | `focusable: false` no Windows pode impedir drag nativo | Fallback: drag manual via mousedown + `setPosition` |
 | Janela extra = processo renderer extra (~50MB) | Só cria quando `pet.enabled`; destroy no disable |
 | `screen-saver` level compete com outros overlays | Nível configurável se conflitar; default `screen-saver` |
-| Badge desatualiza se push perde evento | Re-hidratar via `agent:get-activity-stats` em interval lento (60s) como safety net |
+| Badge desatualiza se push perde evento | Sem canal de "ativos agora" pra re-hidratar (limitação conhecida); badge converge no próximo started/finished. Se doer na prática, criar invoke `pet:get-active` lendo o estado do issue-execution-service |
 
 ## Validação
 

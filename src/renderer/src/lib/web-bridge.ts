@@ -146,6 +146,10 @@ function installWebBridge(): void {
     onChannelAccountUpdated: (l) => subscribe('channels:account-updated', l as PushListener),
     onTeamsLoginCode: (l) => subscribe('channels:teams-login-code', l as PushListener),
     onOpenSettings: (l) => subscribe('app:open-settings', l as PushListener),
+    // Pet é desktop-only: estes eventos são sends DIRECIONADOS (nunca chegam no
+    // SSE do gateway) — espelhados só pra manter a paridade de shape da API.
+    onAppNavigate: (l) => subscribe('app:navigate', l as PushListener),
+    onPetSettingsChanged: (l) => subscribe('pet:settings-changed', l as PushListener),
     // Espelha o preload: dois canais alimentam o mesmo handler, com o payload
     // de `issues:created-by-chat` normalizado pro shape de IssuesChangedEvent.
     onIssuesChanged: (l) => {

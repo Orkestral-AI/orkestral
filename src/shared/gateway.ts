@@ -35,6 +35,7 @@ export const GATEWAY_WEB_UNAVAILABLE_CHANNELS = [
   // desktop pet — janela flutuante nativa, não existe no browser
   'pet:set-ignore-mouse',
   'pet:set-enabled',
+  'pet:open-target',
   // pickers e integrações com o shell do SO (abrem NA MÁQUINA DO DAEMON)
   'dialog:open-directory',
   'dialog:open-file',

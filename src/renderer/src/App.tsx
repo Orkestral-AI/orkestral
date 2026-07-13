@@ -192,6 +192,14 @@ export function App() {
     });
   }, []);
 
+  // Desktop pet: clique num card → main foca esta janela e pede a navegação.
+  useEffect(() => {
+    if (typeof window.orkestralEvents?.onAppNavigate !== 'function') return;
+    return window.orkestralEvents.onAppNavigate(({ hash }) => {
+      window.location.hash = hash;
+    });
+  }, []);
+
   // Auto-update (Win/Linux): nova versão baixada em background → toast persistente
   // com "Reiniciar agora" (aplica a atualização e reabre o app).
   useEffect(() => {

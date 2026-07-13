@@ -1,6 +1,7 @@
 import { app } from '../../platform/electron';
 import { registerHandler } from '../register';
 import { SettingsRepository } from '../../db/repositories/settings.repo';
+import { notifyPetSettingsChanged } from '../../pet/pet-window';
 import type { SettingsRecord } from '@shared/types';
 
 /**
@@ -33,6 +34,8 @@ export function registerSettingsHandlers(): void {
     if (req && req.system && 'launchOnStartup' in req.system) {
       applyLoginItem(record);
     }
+    // Pet aberto aplica tamanho/som/filtros ao vivo (no-op se fechado/Node puro).
+    notifyPetSettingsChanged(record);
     return record;
   });
 }
