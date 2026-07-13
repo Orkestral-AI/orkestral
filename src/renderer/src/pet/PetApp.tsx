@@ -123,7 +123,7 @@ export function PetApp() {
         dispatch({ kind: 'exec-started', id: event.issueId });
       } else if (event.type === 'finished') {
         dispatch({ kind: 'exec-finished', id: event.issueId });
-        if (s?.notifications.execution) {
+        if (s?.notifications?.execution) {
           pushCard(
             {
               id: `exec-${event.issueId}`,
@@ -141,7 +141,7 @@ export function PetApp() {
         }
       } else if (event.type === 'error') {
         dispatch({ kind: 'exec-error', id: event.issueId });
-        if (s?.notifications.execution) {
+        if (s?.notifications?.execution) {
           pushCard(
             {
               id: `exec-${event.issueId}`,
@@ -163,7 +163,7 @@ export function PetApp() {
   useEffect(() => {
     return window.orkestralEvents.onChatSessionReady((event) => {
       const s = settingsRef.current;
-      if (!s?.notifications.execution) return;
+      if (!s?.notifications?.execution) return;
       pushCard(
         {
           id: `session-${event.sessionId}`,
@@ -184,7 +184,7 @@ export function PetApp() {
     return window.orkestralEvents.onInboxProposal((event) => {
       const s = settingsRef.current;
       dispatch({ kind: 'attention' });
-      if (!s?.notifications.inbox) return;
+      if (!s?.notifications?.inbox) return;
       pushCard(
         {
           id: `inbox-${event.sourceId}-${event.title}`,
@@ -204,7 +204,7 @@ export function PetApp() {
   useEffect(() => {
     return window.orkestralEvents.onUpdateDownloaded(({ version }) => {
       const s = settingsRef.current;
-      if (!s?.notifications.updates) return;
+      if (!s?.notifications?.updates) return;
       pushCard(
         {
           id: `update-${version}`,

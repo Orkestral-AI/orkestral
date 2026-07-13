@@ -182,7 +182,7 @@ export function SystemPanel() {
             description={t('settings.system.petNotifExecutionDescription')}
             right={
               <Switch
-                checked={pet?.notifications.execution ?? true}
+                checked={pet?.notifications?.execution ?? true}
                 onCheckedChange={(v) => void updatePet({ notifications: { execution: v } })}
               />
             }
@@ -192,7 +192,7 @@ export function SystemPanel() {
             description={t('settings.system.petNotifInboxDescription')}
             right={
               <Switch
-                checked={pet?.notifications.inbox ?? false}
+                checked={pet?.notifications?.inbox ?? false}
                 onCheckedChange={(v) => void updatePet({ notifications: { inbox: v } })}
               />
             }
@@ -202,7 +202,7 @@ export function SystemPanel() {
             description={t('settings.system.petNotifUpdatesDescription')}
             right={
               <Switch
-                checked={pet?.notifications.updates ?? true}
+                checked={pet?.notifications?.updates ?? true}
                 onCheckedChange={(v) => void updatePet({ notifications: { updates: v } })}
               />
             }
