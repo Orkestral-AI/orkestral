@@ -179,12 +179,46 @@ export function createPetWindow(): void {
 }
 
 export function destroyPetWindow(): void {
+  endPetDrag();
   if (saveBoundsTimer) {
     clearTimeout(saveBoundsTimer);
     saveBoundsTimer = null;
   }
   if (isPetWindowOpen()) petWindowRef!.destroy();
   petWindowRef = null;
+}
+
+/**
+ * Drag manual: gruda a janela no cursor (offset travado no início) num polling
+ * de ~80fps até o drag-end. Como a janela segue o cursor, o mouseup sempre cai
+ * dentro dela — é o padrão robusto pra drag de frameless SEM app-region (que
+ * engoliria o clique que abre o menu).
+ */
+let dragTimer: NodeJS.Timeout | null = null;
+
+export function startPetDrag(): void {
+  if (!isPetWindowOpen() || !screen || dragTimer) return;
+  const win = petWindowRef!;
+  const cursor = screen.getCursorScreenPoint();
+  const [winX, winY] = win.getPosition();
+  const offsetX = cursor.x - winX;
+  const offsetY = cursor.y - winY;
+  dragTimer = setInterval(() => {
+    if (win.isDestroyed()) {
+      endPetDrag();
+      return;
+    }
+    const c = screen!.getCursorScreenPoint();
+    win.setPosition(c.x - offsetX, c.y - offsetY, false);
+  }, 12);
+}
+
+export function endPetDrag(): void {
+  if (dragTimer) {
+    clearInterval(dragTimer);
+    dragTimer = null;
+  }
+  if (isPetWindowOpen()) scheduleSaveBounds(petWindowRef!);
 }
 
 /** Click-through da janela (chamado pelo renderer do pet via IPC). */

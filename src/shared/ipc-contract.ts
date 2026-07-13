@@ -291,6 +291,16 @@ export type IpcContract = {
     request: { hash: string | null; openSettings?: boolean };
     response: { ok: true };
   };
+  /** Drag manual do pet (drag nativo por app-region engoliria o clique do menu):
+   *  o main gruda a janela no cursor via polling até o drag-end. */
+  'pet:drag-start': {
+    request: void;
+    response: { ok: true };
+  };
+  'pet:drag-end': {
+    request: void;
+    response: { ok: true };
+  };
   /** Sai da sessão local sem apagar dados do workspace. */
   'app:logout': {
     request: void;
@@ -2511,6 +2521,8 @@ export const IPC_CHANNELS = [
   'pet:set-ignore-mouse',
   'pet:set-enabled',
   'pet:open-target',
+  'pet:drag-start',
+  'pet:drag-end',
   'app:logout',
   'app:webview-preload-path',
   'cloud:get-account',

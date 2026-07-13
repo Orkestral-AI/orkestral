@@ -256,11 +256,67 @@ export function PetApp() {
     void window.orkestral['settings:update']({ pet: next }).catch(() => {});
   }, []);
 
+  // Drag manual do sprite: mousedown arma; passou de 4px vira drag (main gruda
+  // a janela no cursor); soltou sem passar = clique → abre/fecha o menu.
+  // Direção horizontal vira a "inclinação de andar" (estilo Codex).
+  const [dragging, setDragging] = useState(false);
+  const [lean, setLean] = useState<0 | 1 | -1>(0);
+  const leanResetTimer = useRef<number | null>(null);
+
+  const handleStageMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    const startX = e.screenX;
+    const startY = e.screenY;
+    let started = false;
+    let lastX = e.screenX;
+
+    const onMove = (ev: MouseEvent): void => {
+      if (!started && Math.hypot(ev.screenX - startX, ev.screenY - startY) > 4) {
+        started = true;
+        setDragging(true);
+        setMenuOpen(false);
+        void window.orkestral['pet:drag-start']().catch(() => {});
+      }
+      if (!started) return;
+      const dx = ev.screenX - lastX;
+      lastX = ev.screenX;
+      if (dx > 1) setLean(1);
+      else if (dx < -1) setLean(-1);
+      // parou de andar na horizontal → endireita depois de um instante
+      if (leanResetTimer.current) window.clearTimeout(leanResetTimer.current);
+      leanResetTimer.current = window.setTimeout(() => setLean(0), 140);
+    };
+    const onUp = (): void => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      if (started) {
+        void window.orkestral['pet:drag-end']().catch(() => {});
+        setDragging(false);
+        setLean(0);
+        if (leanResetTimer.current) window.clearTimeout(leanResetTimer.current);
+      } else {
+        setMenuOpen((v) => !v);
+      }
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }, []);
+
   const visual = derivePetVisual(petState, now);
   const activeCount = petState.activeIds.length;
   const collapsed = settings?.collapsed ?? false;
   const shown = collapsed ? [] : visibleCards(cards);
   const queued = collapsed ? 0 : queuedCount(cards);
+  const stageClasses = [
+    'pet-stage',
+    settings?.size === 'sm' ? 'pet-stage--sm' : '',
+    `pet--${visual}`,
+    dragging ? 'pet--dragging' : '',
+    lean === 1 ? 'pet--lean-right' : lean === -1 ? 'pet--lean-left' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className="pet-root">
@@ -314,10 +370,10 @@ export function PetApp() {
       )}
 
       <div className="pet-dock">
-        {/* menu do pet (estilo Codex: botão redondo ao lado do sprite) */}
-        <div className="pet-menu-area" {...zone}>
+        {/* sprite: clique abre o menu; segurar (>4px) arrasta; badge = agentes ativos */}
+        <div className={stageClasses} {...zone} onMouseDown={handleStageMouseDown}>
           {menuOpen && (
-            <div className="pet-menu">
+            <div className="pet-menu" onMouseDown={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 onClick={() => {
@@ -358,22 +414,6 @@ export function PetApp() {
               </button>
             </div>
           )}
-          <button
-            type="button"
-            className="pet-menu-btn"
-            aria-label="Menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <ChevronDown size={14} aria-hidden />
-          </button>
-        </div>
-
-        {/* sprite: segurar arrasta a janela; badge = agentes ativos */}
-        <div
-          className={`pet-stage ${settings?.size === 'sm' ? 'pet-stage--sm' : ''} pet--${visual}`}
-          {...zone}
-        >
           {activeCount > 0 && <span className="pet-badge">{activeCount}</span>}
           <PetSprite state={visual} />
         </div>

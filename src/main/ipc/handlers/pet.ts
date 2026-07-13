@@ -1,5 +1,11 @@
 import { registerHandler } from '../register';
-import { setPetIgnoreMouse, setPetEnabled, openTargetFromPet } from '../../pet/pet-window';
+import {
+  setPetIgnoreMouse,
+  setPetEnabled,
+  openTargetFromPet,
+  startPetDrag,
+  endPetDrag,
+} from '../../pet/pet-window';
 
 /**
  * Handlers do desktop pet (docs/DESKTOP_PET.md). Ambos são desktop-only
@@ -23,6 +29,16 @@ export function registerPetHandlers(): void {
   // Clique num card/menu do pet → foca o app e navega/abre Configurações.
   registerHandler('pet:open-target', (req) => {
     openTargetFromPet(req.hash, req.openSettings);
+    return { ok: true as const };
+  });
+
+  // Drag manual do sprite (segurar e arrastar) — janela segue o cursor.
+  registerHandler('pet:drag-start', () => {
+    startPetDrag();
+    return { ok: true as const };
+  });
+  registerHandler('pet:drag-end', () => {
+    endPetDrag();
     return { ok: true as const };
   });
 }

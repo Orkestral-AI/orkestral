@@ -21,39 +21,11 @@
   gap: 6px;
 }
 
-.pet-menu-area {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  -webkit-app-region: no-drag;
-}
-
-.pet-menu-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1px solid rgba(196, 181, 253, 0.25);
-  background: #17181b;
-  color: #a1a1aa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.pet-menu-btn:hover {
-  color: #f4f4f5;
-  border-color: rgba(196, 181, 253, 0.5);
-}
-
 .pet-menu {
   position: absolute;
-  bottom: 32px;
+  bottom: calc(100% + 8px);
   right: 0;
+  cursor: default;
   min-width: 180px;
   padding: 4px;
   border-radius: 12px;
@@ -202,9 +174,10 @@
 .pet-stage {
   position: relative;
   width: 108px;
-  /* segurar o boneco arrasta a janela inteira */
-  -webkit-app-region: drag;
+  /* drag é MANUAL (mousedown+threshold no PetApp) — app-region engoliria o
+     clique que abre o menu */
   cursor: grab;
+  user-select: none;
 }
 
 .pet-stage--sm {
@@ -216,6 +189,59 @@
   height: auto;
   display: block;
   overflow: visible;
+  transform-origin: 50% 62%;
+  transition:
+    transform 0.16s ease,
+    filter 0.2s ease;
+}
+
+/* hover: cresce um tico e ganha um brilho de cristal */
+.pet-stage:hover svg {
+  transform: scale(1.06);
+  filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.5));
+}
+
+/* ─── Drag: levanta, para o bob e "anda" inclinando pro lado ──── */
+
+.pet--dragging {
+  cursor: grabbing;
+}
+
+.pet--dragging .pet-body,
+.pet--dragging .pet-shard--left,
+.pet--dragging .pet-shard--right,
+.pet--dragging .pet-eyes--blink {
+  animation: none !important;
+}
+
+/* segurado no ar: estilhaços "penduram" */
+.pet--dragging .pet-shard--left,
+.pet--dragging .pet-shard--right {
+  transform: translateY(7px) rotate(22deg);
+  transition: transform 0.25s ease;
+}
+
+.pet--dragging .pet-shadow {
+  opacity: 0.22;
+}
+
+.pet--dragging svg {
+  transform: scale(1.06);
+}
+
+.pet--dragging.pet--lean-right svg {
+  transform: scale(1.06) rotate(9deg);
+}
+
+.pet--dragging.pet--lean-left svg {
+  transform: scale(1.06) rotate(-9deg);
+}
+
+/* sombra: escala SEMPRE a partir do próprio centro (SVG escala da origem 0,0
+   por default — era isso que fazia a sombra "andar de lado" no bob) */
+.pet-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* contador de agentes ativos */
