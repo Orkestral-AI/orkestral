@@ -24,7 +24,7 @@ export interface PetCard {
   expiresAt: number;
 }
 
-export const CARD_TTL_MS = 8_000;
+export const CARD_TTL_MS = 12_000;
 export const MAX_VISIBLE_CARDS = 3;
 
 /** Adiciona no topo. Id repetido substitui (evento re-emitido não duplica card). */

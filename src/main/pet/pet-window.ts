@@ -114,6 +114,12 @@ export function createPetWindow(): void {
 
   const { x, y } = resolveInitialPosition();
   const win = new BrowserWindow({
+    // PAINEL NÃO-ATIVANTE (macOS): clicar no pet NÃO pode ativar o app —
+    // ativação no macOS traz TODAS as janelas do app pra frente (comportamento
+    // nativo do AppKit, fora do nosso controle), então qualquer clique no pet
+    // "abria o Orkestral". NSPanel (estilo Spotlight) recebe o clique sem
+    // ativar o dono. No Win/Linux não existe/não precisa.
+    ...(process.platform === 'darwin' ? { type: 'panel' as const } : {}),
     width: PET_WINDOW_WIDTH,
     height: PET_WINDOW_HEIGHT,
     x,

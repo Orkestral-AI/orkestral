@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
-  ChevronDown,
-  ChevronUp,
   X,
   CircleAlert,
   Inbox,
@@ -11,7 +9,7 @@ import {
   Settings,
   EyeOff,
   AppWindow,
-  Bell,
+  BellOff,
 } from 'lucide-react';
 import type { SettingsRecord } from '@shared/types';
 import { PetSprite } from './PetSprite';
@@ -76,7 +74,7 @@ function useSurgicalClickThrough(): void {
     let interactive = false;
     const onMove = (e: MouseEvent): void => {
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      let next = !!el?.closest('.pet-stage, .pet-card, .pet-menu, .pet-collapsed-pill');
+      let next = !!el?.closest('.pet-stage, .pet-card, .pet-menu');
       if (!next) {
         // Pré-arma num raio de 20px do boneco: o destravar do clique é um IPC
         // assíncrono — sem a margem, um clique rápido atravessava a janela
@@ -397,13 +395,14 @@ export function PetApp() {
     [handleDismiss],
   );
 
-  const toggleCollapsed = useCallback(() => {
-    const current = settingsRef.current;
-    if (!current) return;
-    const next = { ...current, collapsed: !current.collapsed };
-    setSettings(next);
-    void window.orkestral['settings:update']({ pet: next }).catch(() => {});
-  }, []);
+  // Limpa a pilha inteira (menu "Limpar avisos"). Notificação nova SEMPRE
+  // mostra o card — o antigo modo "recolhido" escondia tudo sem sinal e o
+  // usuário achava que o pet tinha parado de funcionar.
+  const clearCards = useCallback(() => {
+    setCards([]);
+    dispatch({ kind: 'error-dismissed' });
+    dispatch({ kind: 'attention-cleared' });
+  }, [dispatch]);
 
   // Drag manual do sprite: mousedown arma; passou de 4px vira drag (main gruda
   // a janela no cursor); soltou sem passar = clique → abre/fecha o menu.
@@ -454,9 +453,8 @@ export function PetApp() {
 
   const visual = derivePetVisual(petState, now);
   const activeCount = petState.activeIds.length;
-  const collapsed = settings?.collapsed ?? false;
-  const shown = collapsed ? [] : visibleCards(cards);
-  const queued = collapsed ? 0 : queuedCount(cards);
+  const shown = visibleCards(cards);
+  const queued = queuedCount(cards);
   const stageClasses = [
     'pet-stage',
     settings?.size === 'sm' ? 'pet-stage--sm' : '',
@@ -485,23 +483,11 @@ export function PetApp() {
       height += Math.ceil(m.height) + 8;
     }
     void window.orkestral['pet:resize']({ width: width + 24, height: height + 24 }).catch(() => {});
-  }, [shown.length, queued, collapsed, menuOpen, settings?.size, activeCount]);
+  }, [shown.length, queued, menuOpen, settings?.size, activeCount]);
 
   return (
     <div className="pet-root">
       <div className="pet-content" ref={contentRef}>
-        {/* recolhido com avisos na fila: contador clicável (senão o modo
-          recolhido "engole" notificação sem nenhum sinal) */}
-        {collapsed && cards.length > 0 && (
-          <button
-            type="button"
-            className="pet-collapsed-pill"
-            aria-label={t.expandCards}
-            onClick={toggleCollapsed}
-          >
-            <Bell size={12} aria-hidden /> {cards.length}
-          </button>
-        )}
         {/* stack de cards, mais recente em cima */}
         {shown.length > 0 && (
           <div className="pet-cards">
@@ -570,15 +556,10 @@ export function PetApp() {
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
-                    toggleCollapsed();
+                    clearCards();
                   }}
                 >
-                  {collapsed ? (
-                    <ChevronUp size={14} aria-hidden />
-                  ) : (
-                    <ChevronDown size={14} aria-hidden />
-                  )}
-                  {collapsed ? t.expandCards : t.collapseCards}
+                  <BellOff size={14} aria-hidden /> {t.clearCards}
                 </button>
                 <button
                   type="button"
