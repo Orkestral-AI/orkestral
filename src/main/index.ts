@@ -59,6 +59,7 @@ import {
   initPetWindowFromSettings,
   setPetEnabled,
   onPetEnabledChanged,
+  wasPetRecentlyInteracted,
 } from './pet/pet-window';
 import { SettingsRepository } from './db/repositories/settings.repo';
 
@@ -460,6 +461,10 @@ app.whenReady().then(async () => {
 
     app.on('activate', () => {
       // Clique no Dock → traz a janela de volta (recria se foi destruída).
+      // EXCETO quando a ativação veio de interação com o PET: clicar no pet
+      // ativa o app no macOS e puxaria a janela principal junto — o pet tem
+      // seus próprios caminhos pra abrir o app (menu e cards).
+      if (wasPetRecentlyInteracted()) return;
       showMainWindow();
     });
   } catch (error) {

@@ -198,6 +198,7 @@ let dragTimer: NodeJS.Timeout | null = null;
 
 export function startPetDrag(): void {
   if (!isPetWindowOpen() || !screen || dragTimer) return;
+  notePetInteraction();
   const win = petWindowRef!;
   const cursor = screen.getCursorScreenPoint();
   const [winX, winY] = win.getPosition();
@@ -221,9 +222,27 @@ export function endPetDrag(): void {
   if (isPetWindowOpen()) scheduleSaveBounds(petWindowRef!);
 }
 
+/**
+ * Clicar no pet ATIVA o app no macOS, e o handler de `app.on('activate')`
+ * (feito pro clique no Dock) puxaria a janela principal pra frente — exatamente
+ * o que o usuário NÃO quer ao mexer só no pet. Todo toque no pet (hover/drag)
+ * marca o timestamp; o activate que chegar logo depois é ignorado. Clique no
+ * Dock nunca passa pelo pet, então nunca é suprimido por engano.
+ */
+let lastPetInteraction = 0;
+
+function notePetInteraction(): void {
+  lastPetInteraction = Date.now();
+}
+
+export function wasPetRecentlyInteracted(windowMs = 600): boolean {
+  return Date.now() - lastPetInteraction < windowMs;
+}
+
 /** Click-through da janela (chamado pelo renderer do pet via IPC). */
 export function setPetIgnoreMouse(ignore: boolean): void {
   if (!isPetWindowOpen()) return;
+  notePetInteraction();
   petWindowRef!.setIgnoreMouseEvents(ignore, { forward: true });
 }
 
