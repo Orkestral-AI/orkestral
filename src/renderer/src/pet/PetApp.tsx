@@ -159,6 +159,61 @@ export function PetApp() {
     });
   }, [dispatch, pushCard, t]);
 
+  // CHAT: resposta do agente também é trabalho — o caso mais comum do dia a dia.
+  // message-start liga o "working"; message-end vira done (pulinho + card) ou
+  // error (x_x + card sticky). `synthetic` é espelho de execução de issue e é
+  // IGNORADO (já contamos pelo issue:execution-event — contaria dobrado).
+  const chatRunSessions = useRef(new Map<string, string>());
+  useEffect(() => {
+    return window.orkestralEvents.onChatStream((event) => {
+      const s = settingsRef.current;
+      if (event.type === 'message-start') {
+        if (event.synthetic) return;
+        chatRunSessions.current.set(event.runId, event.sessionId);
+        dispatch({ kind: 'exec-started', id: `chat-${event.runId}` });
+      } else if (event.type === 'message-end') {
+        const sessionId = chatRunSessions.current.get(event.runId);
+        if (!sessionId) return; // synthetic (ou start que não vimos)
+        chatRunSessions.current.delete(event.runId);
+        if (event.status === 'error') {
+          dispatch({ kind: 'exec-error', id: `chat-${event.runId}` });
+          if (s?.notifications?.execution) {
+            pushCard(
+              {
+                id: `chat-${event.runId}`,
+                tone: 'error',
+                source: 'session',
+                title: t.chatFailed,
+                hash: `#/session/${sessionId}`,
+                sticky: true,
+              },
+              s,
+            );
+          }
+        } else if (event.status === 'done') {
+          dispatch({ kind: 'exec-finished', id: `chat-${event.runId}` });
+          if (s?.notifications?.execution) {
+            pushCard(
+              {
+                id: `chat-${event.runId}`,
+                tone: 'success',
+                source: 'session',
+                title: t.chatDone,
+                description: t.chatDoneDescription,
+                hash: `#/session/${sessionId}`,
+                sticky: false,
+              },
+              s,
+            );
+          }
+        } else {
+          // cancelled: limpa sem celebrar nem alarmar
+          dispatch({ kind: 'exec-cleared', id: `chat-${event.runId}` });
+        }
+      }
+    });
+  }, [dispatch, pushCard, t]);
+
   // sessão de chat preparada em background
   useEffect(() => {
     return window.orkestralEvents.onChatSessionReady((event) => {

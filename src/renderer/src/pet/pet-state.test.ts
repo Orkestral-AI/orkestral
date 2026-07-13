@@ -45,6 +45,17 @@ describe('reducePetState', () => {
     expect(s.hasError).toBe(true);
   });
 
+  it('exec-cleared remove sem flash de done nem erro (chat cancelado)', () => {
+    const s = run([
+      { kind: 'exec-started', id: 'a' },
+      { kind: 'exec-cleared', id: 'a' },
+    ]);
+    expect(s.activeIds).toEqual([]);
+    expect(s.doneUntil).toBe(0);
+    expect(s.hasError).toBe(false);
+    expect(derivePetVisual(s, NOW)).toBe('idle');
+  });
+
   it('hydrate substitui as ativas e deduplica', () => {
     const s = run([
       { kind: 'exec-started', id: 'velha' },

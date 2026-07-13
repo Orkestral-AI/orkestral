@@ -184,7 +184,7 @@
   width: 84px;
 }
 
-.pet-stage svg {
+.pet-stage > svg {
   width: 100%;
   height: auto;
   display: block;
@@ -196,7 +196,7 @@
 }
 
 /* hover: cresce um tico e ganha um brilho de cristal */
-.pet-stage:hover svg {
+.pet-stage:hover > svg {
   transform: scale(1.06);
   filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.5));
 }
@@ -225,15 +225,15 @@
   opacity: 0.22;
 }
 
-.pet--dragging svg {
+.pet--dragging > svg {
   transform: scale(1.06);
 }
 
-.pet--dragging.pet--lean-right svg {
+.pet--dragging.pet--lean-right > svg {
   transform: scale(1.06) rotate(9deg);
 }
 
-.pet--dragging.pet--lean-left svg {
+.pet--dragging.pet--lean-left > svg {
   transform: scale(1.06) rotate(-9deg);
 }
 

@@ -100,6 +100,7 @@ O pet **assina eventos que já existem** — nada novo no motor:
 | Evento (pushBus/broadcast) | Uso no pet |
 |----------------------------|------------|
 | `issue:execution-event` | Estados started/finished/error → sprite + cards. Mesma fonte do `agentStatusStore` do app |
+| `chat:stream` | Resposta do agente no chat: `message-start` → working; `message-end` done/error → done/erro + card pra `#/session/:id`; cancelled limpa sem card. Eventos `synthetic` (espelho de issue) são ignorados — contariam dobrado |
 | `chat:session-ready` | Card "sessão pronta" |
 | `inbox:proposal-created` | Estado `attention` + card (opt-in) |
 | `update:downloaded` | Card "atualização disponível" |

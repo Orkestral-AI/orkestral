@@ -13,6 +13,8 @@ export type PetEvent =
   | { kind: 'exec-started'; id: string }
   | { kind: 'exec-finished'; id: string }
   | { kind: 'exec-error'; id: string }
+  /** Remove uma execução SEM flash de done nem erro (ex.: chat cancelado). */
+  | { kind: 'exec-cleared'; id: string }
   | { kind: 'attention' }
   | { kind: 'attention-cleared' }
   | { kind: 'error-dismissed' }
@@ -60,6 +62,10 @@ export function reducePetState(state: PetState, event: PetEvent, now: number): P
         activeIds: state.activeIds.filter((id) => id !== event.id),
         hasError: true,
       };
+    }
+    case 'exec-cleared': {
+      if (!state.activeIds.includes(event.id)) return state;
+      return { ...state, activeIds: state.activeIds.filter((id) => id !== event.id) };
     }
     case 'attention':
       return { ...state, hasAttention: true };
