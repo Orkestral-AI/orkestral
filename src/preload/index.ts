@@ -14,6 +14,7 @@ import type {
   VoiceInstallEvent,
   IssueExecutionEvent,
   ChannelAccountSnapshot,
+  SettingsRecord,
 } from '../shared/types';
 
 /**
@@ -135,6 +136,10 @@ export interface OrkestralEvents {
   onTeamsLoginCode: (listener: (event: { code: string; url: string }) => void) => () => void;
   /** Tray (barra de menu) "Preferências…" → abre as Configurações no renderer. */
   onOpenSettings: (listener: () => void) => () => void;
+  /** Pet pediu navegação (clique num card) → setar window.location.hash. */
+  onAppNavigate: (listener: (event: { hash: string }) => void) => () => void;
+  /** Settings mudaram — send direcionado pro renderer do PET (tamanho/som/filtros ao vivo). */
+  onPetSettingsChanged: (listener: (event: SettingsRecord['pet']) => void) => () => void;
 }
 
 function buildEvents(): OrkestralEvents {
@@ -164,6 +169,16 @@ function buildEvents(): OrkestralEvents {
       const wrapped = () => listener();
       ipcRenderer.on('app:open-settings', wrapped);
       return () => ipcRenderer.removeListener('app:open-settings', wrapped);
+    },
+    onAppNavigate(listener) {
+      const wrapped = (_e: IpcRendererEvent, payload: { hash: string }) => listener(payload);
+      ipcRenderer.on('app:navigate', wrapped);
+      return () => ipcRenderer.removeListener('app:navigate', wrapped);
+    },
+    onPetSettingsChanged(listener) {
+      const wrapped = (_e: IpcRendererEvent, payload: SettingsRecord['pet']) => listener(payload);
+      ipcRenderer.on('pet:settings-changed', wrapped);
+      return () => ipcRenderer.removeListener('pet:settings-changed', wrapped);
     },
     onChatQueueChanged(listener) {
       const wrapped = (

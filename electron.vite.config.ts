@@ -57,7 +57,11 @@ export default defineConfig(({ mode }) => {
       root: resolve('src/renderer'),
       build: {
         rollupOptions: {
-          input: resolve('src/renderer/index.html'),
+          input: {
+            index: resolve('src/renderer/index.html'),
+            // Desktop pet — janela flutuante (docs/DESKTOP_PET.md).
+            pet: resolve('src/renderer/pet.html'),
+          },
           output: {
             // Forma FUNÇÃO (não array): casa por path em node_modules, então
             // nunca quebra se um pacote declarado não estiver instalado. Agrupa

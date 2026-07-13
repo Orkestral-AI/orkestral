@@ -93,6 +93,19 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   performance: {
     preset: DEFAULT_PERFORMANCE_PRESET,
   },
+  pet: {
+    enabled: false,
+    bounds: null,
+    collapsed: false,
+    size: 'md',
+    sound: true,
+    doNotDisturb: false,
+    notifications: {
+      execution: true,
+      inbox: false,
+      updates: true,
+    },
+  },
 };
 
 function nowIso(): string {
@@ -118,6 +131,15 @@ export class SettingsRepository {
       aiRouting: { ...DEFAULT_SETTINGS.aiRouting, ...(stored.aiRouting ?? {}) },
       knowledge: { ...DEFAULT_SETTINGS.knowledge, ...(stored.knowledge ?? {}) },
       performance: { ...DEFAULT_SETTINGS.performance, ...(stored.performance ?? {}) },
+      pet: {
+        ...DEFAULT_SETTINGS.pet,
+        ...(stored.pet ?? {}),
+        // sub-objeto aninhado precisa do próprio merge defensivo
+        notifications: {
+          ...DEFAULT_SETTINGS.pet.notifications,
+          ...(stored.pet?.notifications ?? {}),
+        },
+      },
     };
   }
 
@@ -131,6 +153,14 @@ export class SettingsRepository {
       aiRouting: { ...current.aiRouting, ...(patch.aiRouting ?? {}) },
       knowledge: { ...current.knowledge, ...(patch.knowledge ?? {}) },
       performance: { ...current.performance, ...(patch.performance ?? {}) },
+      pet: {
+        ...current.pet,
+        ...(patch.pet ?? {}),
+        notifications: {
+          ...current.pet.notifications,
+          ...(patch.pet?.notifications ?? {}),
+        },
+      },
     };
     this.replace(next);
     return next;

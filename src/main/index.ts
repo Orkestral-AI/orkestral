@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, Tray, Menu, nativeTheme } from 'electron';
+import { app, BrowserWindow, nativeImage, Tray, Menu, nativeTheme, globalShortcut } from 'electron';
 import { join, dirname } from 'node:path';
 import { openExternalSafe } from './utils/safe-shell';
 import { fileURLToPath } from 'node:url';
@@ -54,6 +54,14 @@ import {
 } from './services/cloud-auth';
 import { buildApplicationMenu } from './menu';
 import { fixPath } from './utils/fix-path';
+import {
+  configurePetWindow,
+  initPetWindowFromSettings,
+  setPetEnabled,
+  onPetEnabledChanged,
+  isCursorOverPet,
+} from './pet/pet-window';
+import { SettingsRepository } from './db/repositories/settings.repo';
 
 // App empacotado aberto pelo Finder herda um PATH mínimo e não acha
 // `claude`/`codex`/`node` → `spawn ENOENT`. Corrige o PATH antes de qualquer
@@ -257,6 +265,47 @@ function trayIconImage(): Electron.NativeImage {
   return getAppIcon()?.resize({ width: 22, height: 22 }) ?? nativeImage.createEmpty();
 }
 
+/** Atalho global de mostrar/ocultar o pet (funciona com o app em background). */
+const PET_TOGGLE_SHORTCUT = 'CommandOrControl+Alt+P';
+
+/** Menu do Tray. Reconstruído a cada toggle do pet — o label
+ *  "Ocultar/Mostrar pet" reflete o estado persistido nas settings. */
+function buildTrayMenu(): Electron.Menu {
+  let petEnabled = false;
+  try {
+    petEnabled = new SettingsRepository().get().pet.enabled;
+  } catch {
+    // DB ainda não inicializado — trata como desligado
+  }
+  return Menu.buildFromTemplate([
+    { label: 'Abrir Orkestral', click: () => showMainWindow() },
+    {
+      label: petEnabled ? 'Ocultar pet' : 'Mostrar pet',
+      // Display do atalho global (registrado no boot via globalShortcut).
+      // registerAccelerator:false — sem registro duplicado via menu (Win/Linux).
+      accelerator: PET_TOGGLE_SHORTCUT,
+      registerAccelerator: false,
+      click: () => setPetEnabled(!petEnabled),
+    },
+    {
+      label: 'Preferências…',
+      click: () => {
+        showMainWindow();
+        mainWindowRef?.webContents.send('app:open-settings');
+      },
+    },
+    { label: 'Verificar atualizações…', click: () => void checkForUpdatesFromTray() },
+    { type: 'separator' },
+    {
+      label: 'Sair do Orkestral',
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      },
+    },
+  ]);
+}
+
 /** Cria o ícone na barra de menu (Tray) — é o que mantém o Orkestral acessível
  *  "na topbar" mesmo com a janela fechada/escondida. */
 function setupTray(): void {
@@ -265,27 +314,9 @@ function setupTray(): void {
   // Troca a logo na hora quando o usuário alterna dark/light no SO.
   nativeTheme.on('updated', () => tray?.setImage(trayIconImage()));
   tray.setToolTip('Orkestral');
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      { label: 'Abrir Orkestral', click: () => showMainWindow() },
-      {
-        label: 'Preferências…',
-        click: () => {
-          showMainWindow();
-          mainWindowRef?.webContents.send('app:open-settings');
-        },
-      },
-      { label: 'Verificar atualizações…', click: () => void checkForUpdatesFromTray() },
-      { type: 'separator' },
-      {
-        label: 'Sair do Orkestral',
-        click: () => {
-          isQuitting = true;
-          app.quit();
-        },
-      },
-    ]),
-  );
+  tray.setContextMenu(buildTrayMenu());
+  // Toggle do pet (Tray OU Configurações) → label do menu acompanha.
+  onPetEnabledChanged(() => tray?.setContextMenu(buildTrayMenu()));
 }
 
 // ─── Deep link (orkestral://) — login via Orkestral Cloud ─────────
@@ -362,6 +393,30 @@ app.whenReady().then(async () => {
     registerAllIpcHandlers();
     createWindow();
     setupTray();
+    // Desktop pet: os paths saem DESTE módulo (entry raiz, __dirname estável) —
+    // o pet-window vira chunk compartilhado com o CLI e não pode confiar no
+    // próprio import.meta.url. Configurar ANTES de qualquer criação de janela.
+    configurePetWindow({
+      preload: join(__dirname, '../preload/index.mjs'),
+      prodHtml: join(__dirname, '../renderer/pet.html'),
+    });
+    // Recria se o usuário deixou ligado na última sessão.
+    initPetWindowFromSettings();
+    // Atalho global de toggle do pet. Best-effort: se outro app já registrou
+    // a combinação, o register falha e o toggle segue pelo Tray/Configurações.
+    try {
+      globalShortcut.register(PET_TOGGLE_SHORTCUT, () => {
+        let enabled = false;
+        try {
+          enabled = new SettingsRepository().get().pet.enabled;
+        } catch {
+          // DB indisponível — trata como desligado
+        }
+        setPetEnabled(!enabled);
+      });
+    } catch {
+      // registro falhou — sem atalho, sem crash
+    }
     // SMOKE do engine-v2 (gated por env): roda uma fatia viva com Forge real e loga. Dev-only.
     if (process.env.ENGINE_V2_SMOKE) {
       setTimeout(() => {
@@ -428,6 +483,10 @@ app.whenReady().then(async () => {
 
     app.on('activate', () => {
       // Clique no Dock → traz a janela de volta (recria se foi destruída).
+      // EXCETO quando a ativação veio de clique no PET (cursor dentro dos
+      // bounds dele): o pet tem seus próprios caminhos pra abrir o app
+      // (menu e cards) — clicar no boneco não pode puxar a janela principal.
+      if (isCursorOverPet()) return;
       showMainWindow();
     });
   } catch (error) {
@@ -455,6 +514,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', () => {

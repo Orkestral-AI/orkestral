@@ -1855,6 +1855,30 @@ export type SettingsRecord = {
   performance: {
     preset: PerformancePreset;
   };
+  /** Desktop pet — mascote flutuante always-on-top com status dos agentes (docs/DESKTOP_PET.md). */
+  pet: {
+    /** Pet visível. Opt-in: default false. */
+    enabled: boolean;
+    /** Última posição da janela do pet. null = canto inferior direito do display primário. */
+    bounds: { x: number; y: number; displayId: number } | null;
+    /** Cards de notificação recolhidos (só o sprite fica visível). */
+    collapsed: boolean;
+    /** Escala do sprite. */
+    size: 'sm' | 'md';
+    /** Som nos cards do pet (independente do som global do app). */
+    sound: boolean;
+    /** Não perturbe: sprite continua refletindo o estado, mas sem cards nem som. */
+    doNotDisturb: boolean;
+    /** Quais eventos geram card no pet. */
+    notifications: {
+      /** Execuções de issue (concluiu/falhou) + sessão pronta. */
+      execution: boolean;
+      /** Proposta nova no Inbox. */
+      inbox: boolean;
+      /** Atualização do app baixada. */
+      updates: boolean;
+    };
+  };
 };
 
 export type KbAnalysisJobStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';

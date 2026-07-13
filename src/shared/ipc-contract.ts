@@ -270,6 +270,43 @@ export type IpcContract = {
     request: { targetId: number; devtoolsId?: number; open: boolean };
     response: { ok: true };
   };
+  // ---- Desktop pet (docs/DESKTOP_PET.md) — janela flutuante always-on-top ----
+  /** Liga/desliga o click-through da janela do pet. O renderer do pet chama em
+   *  mouseenter/mouseleave das áreas interativas (sprite/cards); fora delas o
+   *  clique atravessa pro app de baixo. */
+  'pet:set-ignore-mouse': {
+    request: { ignore: boolean };
+    response: { ok: true };
+  };
+  /** Mostra/esconde o pet: persiste `pet.enabled` nas settings e cria/destrói a
+   *  janela. Usado pelo toggle das Configurações (o Tray chama o main direto). */
+  'pet:set-enabled': {
+    request: { enabled: boolean };
+    response: { enabled: boolean };
+  };
+  /** Clique num card/menu do pet: foca a janela principal e navega (push
+   *  `app:navigate` com o hash) e/ou abre as Configurações (`app:open-settings`).
+   *  hash null = só focar o app. */
+  'pet:open-target': {
+    request: { hash: string | null; openSettings?: boolean };
+    response: { ok: true };
+  };
+  /** Drag manual do pet (drag nativo por app-region engoliria o clique do menu):
+   *  o main gruda a janela no cursor via polling até o drag-end. */
+  'pet:drag-start': {
+    request: void;
+    response: { ok: true };
+  };
+  'pet:drag-end': {
+    request: void;
+    response: { ok: true };
+  };
+  /** Janela abraça o conteúdo (só o boneco ≈140px; cresce quando chegam cards),
+   *  ancorada no canto inferior direito. Mata a "área invisível" clicável. */
+  'pet:resize': {
+    request: { width: number; height: number };
+    response: { ok: true };
+  };
   /** Sai da sessão local sem apagar dados do workspace. */
   'app:logout': {
     request: void;
@@ -2487,6 +2524,12 @@ export const IPC_CHANNELS = [
   'window:toggle-maximize',
   'webview:set-devtools',
   'window:close',
+  'pet:set-ignore-mouse',
+  'pet:set-enabled',
+  'pet:open-target',
+  'pet:drag-start',
+  'pet:drag-end',
+  'pet:resize',
   'app:logout',
   'app:webview-preload-path',
   'cloud:get-account',

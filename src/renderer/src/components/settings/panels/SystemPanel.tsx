@@ -18,6 +18,9 @@ export function SystemPanel() {
   const { t } = useT();
   const system = useSettingsStore((s) => s.settings?.system);
   const update = useSettingsStore((s) => s.updateSystem);
+  const pet = useSettingsStore((s) => s.settings?.pet);
+  const updatePet = useSettingsStore((s) => s.updatePet);
+  const hydrate = useSettingsStore((s) => s.hydrate);
 
   const launch = system?.launchOnStartup ?? false;
   const notifications = system?.notifications ?? true;
@@ -25,6 +28,13 @@ export function SystemPanel() {
   const inboxNotifications = system?.inboxNotifications ?? true;
   const timeFormat = system?.timeFormat ?? '24h';
   const showAppIn = system?.showAppIn ?? 'dock-and-status';
+
+  async function updatePetEnabled(enabled: boolean): Promise<void> {
+    // pet:set-enabled persiste E cria/destrói a janela no main; o hydrate
+    // ressincroniza a store com o estado canônico (o main é a fonte da verdade).
+    await window.orkestral['pet:set-enabled']({ enabled });
+    await hydrate();
+  }
 
   function updateNotifications(enabled: boolean): void {
     if (enabled && typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -114,6 +124,86 @@ export function SystemPanel() {
               <Switch
                 checked={inboxNotifications}
                 onCheckedChange={(v) => void update({ inboxNotifications: v })}
+              />
+            }
+          />
+        </SettingsSection>
+        <SettingsSection title={t('settings.system.groupPet')}>
+          <ToggleRow
+            label={t('settings.system.petLabel')}
+            description={t('settings.system.petDescription')}
+            right={
+              <Switch
+                checked={pet?.enabled ?? false}
+                onCheckedChange={(v) => void updatePetEnabled(v)}
+              />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petSizeLabel')}
+            description={t('settings.system.petSizeDescription')}
+            right={
+              <Select
+                value={pet?.size ?? 'md'}
+                onValueChange={(v) => void updatePet({ size: v as 'sm' | 'md' })}
+              >
+                <SelectTrigger className="h-8 w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sm">{t('settings.system.petSizeSm')}</SelectItem>
+                  <SelectItem value="md">{t('settings.system.petSizeMd')}</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petSoundLabel')}
+            description={t('settings.system.petSoundDescription')}
+            right={
+              <Switch
+                checked={pet?.sound ?? true}
+                onCheckedChange={(v) => void updatePet({ sound: v })}
+              />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petDndLabel')}
+            description={t('settings.system.petDndDescription')}
+            right={
+              <Switch
+                checked={pet?.doNotDisturb ?? false}
+                onCheckedChange={(v) => void updatePet({ doNotDisturb: v })}
+              />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petNotifExecutionLabel')}
+            description={t('settings.system.petNotifExecutionDescription')}
+            right={
+              <Switch
+                checked={pet?.notifications?.execution ?? true}
+                onCheckedChange={(v) => void updatePet({ notifications: { execution: v } })}
+              />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petNotifInboxLabel')}
+            description={t('settings.system.petNotifInboxDescription')}
+            right={
+              <Switch
+                checked={pet?.notifications?.inbox ?? false}
+                onCheckedChange={(v) => void updatePet({ notifications: { inbox: v } })}
+              />
+            }
+          />
+          <ToggleRow
+            label={t('settings.system.petNotifUpdatesLabel')}
+            description={t('settings.system.petNotifUpdatesDescription')}
+            right={
+              <Switch
+                checked={pet?.notifications?.updates ?? true}
+                onCheckedChange={(v) => void updatePet({ notifications: { updates: v } })}
               />
             }
           />

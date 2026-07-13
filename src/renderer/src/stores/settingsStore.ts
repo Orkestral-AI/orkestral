@@ -31,6 +31,14 @@ interface SettingsStoreState {
   updateAiRouting: (patch: Partial<SettingsRecord['aiRouting']>) => Promise<void>;
   updateKnowledge: (patch: Partial<SettingsRecord['knowledge']>) => Promise<void>;
   updatePerformance: (patch: Partial<SettingsRecord['performance']>) => Promise<void>;
+  /** Campos do pet EXCETO `enabled` — ligar/desligar é via pet:set-enabled
+   *  (o main precisa criar/destruir a janela junto). `notifications` aceita
+   *  patch parcial; o merge do sub-objeto acontece aqui. */
+  updatePet: (
+    patch: Partial<Omit<SettingsRecord['pet'], 'enabled' | 'notifications'>> & {
+      notifications?: Partial<SettingsRecord['pet']['notifications']>;
+    },
+  ) => Promise<void>;
 }
 
 /**
@@ -198,6 +206,18 @@ export const useSettingsStore = create<SettingsStoreState>((set, get) => ({
       applyVisibility(nextSystem);
     }
     const saved = await window.orkestral['settings:update']({ system: nextSystem });
+    set({ settings: saved });
+  },
+  updatePet: async (patch) => {
+    const current = get().settings;
+    if (!current) return;
+    const nextPet: SettingsRecord['pet'] = {
+      ...current.pet,
+      ...patch,
+      notifications: { ...current.pet.notifications, ...(patch.notifications ?? {}) },
+    };
+    set({ settings: { ...current, pet: nextPet } });
+    const saved = await window.orkestral['settings:update']({ pet: nextPet });
     set({ settings: saved });
   },
   updatePrivacy: async (patch) => {
