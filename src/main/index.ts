@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, Tray, Menu, nativeTheme } from 'electron';
+import { app, BrowserWindow, nativeImage, Tray, Menu, nativeTheme, globalShortcut } from 'electron';
 import { join, dirname } from 'node:path';
 import { openExternalSafe } from './utils/safe-shell';
 import { fileURLToPath } from 'node:url';
@@ -265,6 +265,9 @@ function trayIconImage(): Electron.NativeImage {
   return getAppIcon()?.resize({ width: 22, height: 22 }) ?? nativeImage.createEmpty();
 }
 
+/** Atalho global de mostrar/ocultar o pet (funciona com o app em background). */
+const PET_TOGGLE_SHORTCUT = 'CommandOrControl+Alt+P';
+
 /** Menu do Tray. Reconstruído a cada toggle do pet — o label
  *  "Ocultar/Mostrar pet" reflete o estado persistido nas settings. */
 function buildTrayMenu(): Electron.Menu {
@@ -278,6 +281,10 @@ function buildTrayMenu(): Electron.Menu {
     { label: 'Abrir Orkestral', click: () => showMainWindow() },
     {
       label: petEnabled ? 'Ocultar pet' : 'Mostrar pet',
+      // Display do atalho global (registrado no boot via globalShortcut).
+      // registerAccelerator:false — sem registro duplicado via menu (Win/Linux).
+      accelerator: PET_TOGGLE_SHORTCUT,
+      registerAccelerator: false,
       click: () => setPetEnabled(!petEnabled),
     },
     {
@@ -395,6 +402,21 @@ app.whenReady().then(async () => {
     });
     // Recria se o usuário deixou ligado na última sessão.
     initPetWindowFromSettings();
+    // Atalho global de toggle do pet. Best-effort: se outro app já registrou
+    // a combinação, o register falha e o toggle segue pelo Tray/Configurações.
+    try {
+      globalShortcut.register(PET_TOGGLE_SHORTCUT, () => {
+        let enabled = false;
+        try {
+          enabled = new SettingsRepository().get().pet.enabled;
+        } catch {
+          // DB indisponível — trata como desligado
+        }
+        setPetEnabled(!enabled);
+      });
+    } catch {
+      // registro falhou — sem atalho, sem crash
+    }
     // SMOKE do engine-v2 (gated por env): roda uma fatia viva com Forge real e loga. Dev-only.
     if (process.env.ENGINE_V2_SMOKE) {
       setTimeout(() => {
@@ -492,6 +514,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', () => {
