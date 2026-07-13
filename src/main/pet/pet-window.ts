@@ -138,12 +138,14 @@ export function createPetWindow(): void {
   });
   petWindowRef = win;
 
-  // Acima de apps em tela cheia + presente em todos os Spaces (macOS).
+  // Nível 'floating': acima das janelas normais MAS visível em screenshot —
+  // 'screen-saver' era tratado como overlay de sistema e ficava fora dos
+  // prints do usuário. Preço: app em tela cheia pode cobrir o pet.
   // skipTransformProcessType é OBRIGATÓRIO: sem ele o setVisibleOnAllWorkspaces
   // troca a activation policy do app (Regular↔Accessory), e o app principal
   // também alterna o Dock (hydrate/close) — cada flip faz o macOS ESCONDER a
   // janela do pet segundos depois de criada ("aparece e some").
-  win.setAlwaysOnTop(true, 'screen-saver');
+  win.setAlwaysOnTop(true, 'floating');
   win.setVisibleOnAllWorkspaces(true, {
     visibleOnFullScreen: true,
     skipTransformProcessType: true,
@@ -198,7 +200,6 @@ let dragTimer: NodeJS.Timeout | null = null;
 
 export function startPetDrag(): void {
   if (!isPetWindowOpen() || !screen || dragTimer) return;
-  notePetInteraction();
   const win = petWindowRef!;
   const cursor = screen.getCursorScreenPoint();
   const [winX, winY] = win.getPosition();
@@ -225,24 +226,25 @@ export function endPetDrag(): void {
 /**
  * Clicar no pet ATIVA o app no macOS, e o handler de `app.on('activate')`
  * (feito pro clique no Dock) puxaria a janela principal pra frente — exatamente
- * o que o usuário NÃO quer ao mexer só no pet. Todo toque no pet (hover/drag)
- * marca o timestamp; o activate que chegar logo depois é ignorado. Clique no
- * Dock nunca passa pelo pet, então nunca é suprimido por engano.
+ * o que o usuário NÃO quer ao mexer só no pet. Checagem determinística: se o
+ * cursor está dentro dos bounds do pet no momento do activate, a ativação veio
+ * do pet (clique que atravessa a área vazia nem ativa o app — vai pro app de
+ * baixo). Clique no Dock acontece com o cursor no Dock → nunca suprimido.
  */
-let lastPetInteraction = 0;
-
-function notePetInteraction(): void {
-  lastPetInteraction = Date.now();
-}
-
-export function wasPetRecentlyInteracted(windowMs = 600): boolean {
-  return Date.now() - lastPetInteraction < windowMs;
+export function isCursorOverPet(): boolean {
+  if (!isPetWindowOpen() || !screen) return false;
+  try {
+    const c = screen.getCursorScreenPoint();
+    const b = petWindowRef!.getBounds();
+    return c.x >= b.x && c.x <= b.x + b.width && c.y >= b.y && c.y <= b.y + b.height;
+  } catch {
+    return false;
+  }
 }
 
 /** Click-through da janela (chamado pelo renderer do pet via IPC). */
 export function setPetIgnoreMouse(ignore: boolean): void {
   if (!isPetWindowOpen()) return;
-  notePetInteraction();
   petWindowRef!.setIgnoreMouseEvents(ignore, { forward: true });
 }
 

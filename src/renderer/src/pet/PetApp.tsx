@@ -62,22 +62,28 @@ function cleanPreview(text: string): string {
     .slice(0, PREVIEW_MAX);
 }
 
-/** Handlers de hover das áreas interativas (contador cobre sobreposição de zonas). */
-function useInteractiveZone(): { onMouseEnter: () => void; onMouseLeave: () => void } {
-  const depth = useRef(0);
-  return useMemo(
-    () => ({
-      onMouseEnter: () => {
-        depth.current += 1;
-        if (depth.current === 1) setIgnoreMouse(false);
-      },
-      onMouseLeave: () => {
-        depth.current = Math.max(0, depth.current - 1);
-        if (depth.current === 0) setIgnoreMouse(true);
-      },
-    }),
-    [],
-  );
+/**
+ * Click-through cirúrgico: a janela é bem maior que o boneco (área dos cards),
+ * então "cursor sobre algo interativo" NÃO pode depender de mouseenter/leave —
+ * um leave perdido deixava a janela INTEIRA presa como bloqueador de clique
+ * (o "quadrado invisível" à esquerda do pet). Aqui a verdade é contínua: todo
+ * mousemove (com forward:true ele chega mesmo com a janela ignorando o mouse)
+ * consulta elementFromPoint e liga/desliga o ignore só na transição.
+ */
+function useSurgicalClickThrough(): void {
+  useEffect(() => {
+    let interactive = false;
+    const onMove = (e: MouseEvent): void => {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const next = !!el?.closest('.pet-stage, .pet-card, .pet-menu');
+      if (next !== interactive) {
+        interactive = next;
+        setIgnoreMouse(!next);
+      }
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
 }
 
 const CARD_ICONS: Record<PetCard['tone'], typeof Check> = {
@@ -98,7 +104,7 @@ export function PetApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   // relógio de 1s: expira cards e encerra o flash de "done"
   const [now, setNow] = useState(() => Date.now());
-  const zone = useInteractiveZone();
+  useSurgicalClickThrough();
 
   const t: PetMessages = useMemo(() => petMessages(language), [language]);
 
@@ -448,7 +454,7 @@ export function PetApp() {
     <div className="pet-root">
       {/* stack de cards, mais recente em cima */}
       {shown.length > 0 && (
-        <div className="pet-cards" {...zone}>
+        <div className="pet-cards">
           {queued > 0 && (
             <div className="pet-cards-queued">
               +{queued} {t.queued}
@@ -498,7 +504,7 @@ export function PetApp() {
 
       <div className="pet-dock">
         {/* sprite: clique abre o menu; segurar (>4px) arrasta; badge = agentes ativos */}
-        <div className={stageClasses} {...zone} onMouseDown={handleStageMouseDown}>
+        <div className={stageClasses} onMouseDown={handleStageMouseDown}>
           {menuOpen && (
             <div className="pet-menu" onMouseDown={(e) => e.stopPropagation()}>
               <button
