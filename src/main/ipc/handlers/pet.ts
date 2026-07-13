@@ -5,6 +5,7 @@ import {
   openTargetFromPet,
   startPetDrag,
   endPetDrag,
+  resizePetWindow,
 } from '../../pet/pet-window';
 
 /**
@@ -39,6 +40,12 @@ export function registerPetHandlers(): void {
   });
   registerHandler('pet:drag-end', () => {
     endPetDrag();
+    return { ok: true as const };
+  });
+
+  // Janela abraça o conteúdo (renderer mede e pede; âncora inferior-direita).
+  registerHandler('pet:resize', (req) => {
+    resizePetWindow(req.width, req.height);
     return { ok: true as const };
   });
 }

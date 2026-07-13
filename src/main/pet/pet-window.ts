@@ -59,7 +59,11 @@ export function isPetWindowOpen(): boolean {
 
 /** Posição inicial: a última salva, se o display ainda existir e o ponto ainda
  *  cair dentro dele (monitor pode ter sido desconectado/reorganizado); senão
- *  canto inferior direito da área de trabalho do display primário. */
+ *  canto inferior direito da área de trabalho do display primário.
+ *
+ *  `pet.bounds` guarda o CANTO INFERIOR DIREITO (âncora): a janela muda de
+ *  tamanho conforme o conteúdo (pet:resize), então o top-left não é estável
+ *  entre sessões — a âncora é. */
 function resolveInitialPosition(): { x: number; y: number } {
   const fallback = (): { x: number; y: number } => {
     const area = screen!.getPrimaryDisplay().workArea;
@@ -74,12 +78,9 @@ function resolveInitialPosition(): { x: number; y: number } {
     const display = screen!.getAllDisplays().find((d) => d.id === saved.displayId);
     if (!display) return fallback();
     const { x, y, width, height } = display.bounds;
-    const inside =
-      saved.x >= x - PET_WINDOW_WIDTH &&
-      saved.x <= x + width &&
-      saved.y >= y &&
-      saved.y <= y + height;
-    return inside ? { x: saved.x, y: saved.y } : fallback();
+    const inside = saved.x >= x && saved.x <= x + width && saved.y >= y && saved.y <= y + height;
+    if (!inside) return fallback();
+    return { x: saved.x - PET_WINDOW_WIDTH, y: saved.y - PET_WINDOW_HEIGHT };
   } catch {
     return fallback();
   }
@@ -93,11 +94,14 @@ function scheduleSaveBounds(win: ElectronBrowserWindow): void {
       if (win.isDestroyed()) return;
       const bounds = win.getBounds();
       const displayId = screen!.getDisplayMatching(bounds).id;
+      // Âncora = canto inferior direito (ver resolveInitialPosition).
+      const anchorX = bounds.x + bounds.width;
+      const anchorY = bounds.y + bounds.height;
       // Partial<SettingsRecord> só torna as chaves de topo opcionais — o
       // sub-objeto vai inteiro, já mesclado (mesma convenção do settingsStore).
       const repo = new SettingsRepository();
       const pet = repo.get().pet;
-      repo.update({ pet: { ...pet, bounds: { x: bounds.x, y: bounds.y, displayId } } });
+      repo.update({ pet: { ...pet, bounds: { x: anchorX, y: anchorY, displayId } } });
     } catch {
       // best-effort: perder a posição não pode quebrar o pet
     }
@@ -221,6 +225,20 @@ export function endPetDrag(): void {
     dragTimer = null;
   }
   if (isPetWindowOpen()) scheduleSaveBounds(petWindowRef!);
+}
+
+/** Janela abraça o conteúdo: o renderer mede o que está na tela (boneco, cards,
+ *  menu) e pede o tamanho; o main redimensiona MANTENDO o canto inferior
+ *  direito parado. Sem isso a janela fixa 360x480 vira uma área invisível
+ *  gigante que engole cliques ("quadrado oculto" à esquerda do pet). */
+export function resizePetWindow(width: number, height: number): void {
+  if (!isPetWindowOpen() || dragTimer) return; // durante o drag quem manda é o cursor
+  const win = petWindowRef!;
+  const b = win.getBounds();
+  const w = Math.min(Math.max(Math.round(width), 132), 400);
+  const h = Math.min(Math.max(Math.round(height), 148), 560);
+  if (w === b.width && h === b.height) return;
+  win.setBounds({ x: b.x + b.width - w, y: b.y + b.height - h, width: w, height: h });
 }
 
 /**

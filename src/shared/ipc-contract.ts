@@ -301,6 +301,12 @@ export type IpcContract = {
     request: void;
     response: { ok: true };
   };
+  /** Janela abraça o conteúdo (só o boneco ≈140px; cresce quando chegam cards),
+   *  ancorada no canto inferior direito. Mata a "área invisível" clicável. */
+  'pet:resize': {
+    request: { width: number; height: number };
+    response: { ok: true };
+  };
   /** Sai da sessão local sem apagar dados do workspace. */
   'app:logout': {
     request: void;
@@ -2523,6 +2529,7 @@ export const IPC_CHANNELS = [
   'pet:open-target',
   'pet:drag-start',
   'pet:drag-end',
+  'pet:resize',
   'app:logout',
   'app:webview-preload-path',
   'cloud:get-account',

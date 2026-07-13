@@ -12,6 +12,33 @@
   box-sizing: border-box;
 }
 
+/* Conteúdo real (o que a janela abraça via pet:resize) — shrink-wrap. */
+.pet-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* recolhido com avisos pendentes: contador clicável */
+.pet-collapsed-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border: 2px solid #0e0f10;
+  border-radius: 12px;
+  background: #7c3aed;
+  color: #f5f3ff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pet-collapsed-pill:hover {
+  background: #8b5cf6;
+}
+
 /* ─── Dock (menu + sprite lado a lado, ancorado no canto) ─────── */
 
 .pet-dock {
@@ -66,8 +93,9 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  width: 100%;
-  -webkit-app-region: no-drag;
+  /* largura FIXA: o content é shrink-wrap (janela abraça o conteúdo) — 100%
+     aqui viraria referência circular e os cards encolheriam pro tamanho do boneco */
+  width: 336px;
 }
 
 .pet-cards-queued {

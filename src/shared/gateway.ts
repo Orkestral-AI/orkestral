@@ -38,6 +38,7 @@ export const GATEWAY_WEB_UNAVAILABLE_CHANNELS = [
   'pet:open-target',
   'pet:drag-start',
   'pet:drag-end',
+  'pet:resize',
   // pickers e integrações com o shell do SO (abrem NA MÁQUINA DO DAEMON)
   'dialog:open-directory',
   'dialog:open-file',

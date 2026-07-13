@@ -11,6 +11,7 @@ import {
   Settings,
   EyeOff,
   AppWindow,
+  Bell,
 } from 'lucide-react';
 import type { SettingsRecord } from '@shared/types';
 import { PetSprite } from './PetSprite';
@@ -75,7 +76,23 @@ function useSurgicalClickThrough(): void {
     let interactive = false;
     const onMove = (e: MouseEvent): void => {
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      const next = !!el?.closest('.pet-stage, .pet-card, .pet-menu');
+      let next = !!el?.closest('.pet-stage, .pet-card, .pet-menu, .pet-collapsed-pill');
+      if (!next) {
+        // Pré-arma num raio de 20px do boneco: o destravar do clique é um IPC
+        // assíncrono — sem a margem, um clique rápido atravessava a janela
+        // ainda em modo fantasma e acertava o app de baixo (que no canto do
+        // pet costuma ser a janela do próprio Orkestral → "abriu sozinho").
+        const stage = document.querySelector('.pet-stage');
+        if (stage) {
+          const r = stage.getBoundingClientRect();
+          const M = 20;
+          next =
+            e.clientX >= r.left - M &&
+            e.clientX <= r.right + M &&
+            e.clientY >= r.top - M &&
+            e.clientY <= r.bottom + M;
+        }
+      }
       if (next !== interactive) {
         interactive = next;
         setIgnoreMouse(!next);
@@ -450,105 +467,133 @@ export function PetApp() {
     .filter(Boolean)
     .join(' ');
 
+  // Janela abraça o conteúdo: mede o que está na tela e pede o tamanho pro
+  // main (âncora inferior-direita). Menu é absolute (fora do fluxo) — reserva
+  // altura fixa quando aberto.
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    void window.orkestral['pet:resize']({
+      width: Math.ceil(rect.width) + 24,
+      height: Math.ceil(rect.height) + 24 + (menuOpen ? 176 : 0),
+    }).catch(() => {});
+  }, [shown.length, queued, collapsed, menuOpen, settings?.size, activeCount]);
+
   return (
     <div className="pet-root">
-      {/* stack de cards, mais recente em cima */}
-      {shown.length > 0 && (
-        <div className="pet-cards">
-          {queued > 0 && (
-            <div className="pet-cards-queued">
-              +{queued} {t.queued}
-            </div>
-          )}
-          {shown.map((card) => {
-            const Icon = SOURCE_ICONS[card.source] ?? CARD_ICONS[card.tone];
-            return (
-              <div
-                key={card.id}
-                role="button"
-                tabIndex={0}
-                className={`pet-card pet-card--${card.tone}`}
-                onClick={() => handleOpen(card)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleOpen(card);
-                  if (e.key === ' ') {
-                    e.preventDefault();
-                    handleOpen(card);
-                  }
-                }}
-              >
-                <Icon className="pet-card-icon" size={16} aria-hidden />
-                <div className="pet-card-body">
-                  <div className="pet-card-title">{card.title}</div>
-                  {card.description && (
-                    <div className="pet-card-description">{card.description}</div>
-                  )}
-                  {card.meta && <div className="pet-card-meta">{card.meta}</div>}
-                </div>
-                <button
-                  type="button"
-                  className="pet-card-dismiss"
-                  aria-label={t.dismiss}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDismiss(card);
+      <div className="pet-content" ref={contentRef}>
+        {/* recolhido com avisos na fila: contador clicável (senão o modo
+          recolhido "engole" notificação sem nenhum sinal) */}
+        {collapsed && cards.length > 0 && (
+          <button
+            type="button"
+            className="pet-collapsed-pill"
+            aria-label={t.expandCards}
+            onClick={toggleCollapsed}
+          >
+            <Bell size={12} aria-hidden /> {cards.length}
+          </button>
+        )}
+        {/* stack de cards, mais recente em cima */}
+        {shown.length > 0 && (
+          <div className="pet-cards">
+            {queued > 0 && (
+              <div className="pet-cards-queued">
+                +{queued} {t.queued}
+              </div>
+            )}
+            {shown.map((card) => {
+              const Icon = SOURCE_ICONS[card.source] ?? CARD_ICONS[card.tone];
+              return (
+                <div
+                  key={card.id}
+                  role="button"
+                  tabIndex={0}
+                  className={`pet-card pet-card--${card.tone}`}
+                  onClick={() => handleOpen(card)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleOpen(card);
+                    if (e.key === ' ') {
+                      e.preventDefault();
+                      handleOpen(card);
+                    }
                   }}
                 >
-                  <X size={14} aria-hidden />
+                  <Icon className="pet-card-icon" size={16} aria-hidden />
+                  <div className="pet-card-body">
+                    <div className="pet-card-title">{card.title}</div>
+                    {card.description && (
+                      <div className="pet-card-description">{card.description}</div>
+                    )}
+                    {card.meta && <div className="pet-card-meta">{card.meta}</div>}
+                  </div>
+                  <button
+                    type="button"
+                    className="pet-card-dismiss"
+                    aria-label={t.dismiss}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDismiss(card);
+                    }}
+                  >
+                    <X size={14} aria-hidden />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="pet-dock">
+          {/* sprite: clique abre o menu; segurar (>4px) arrasta; badge = agentes ativos */}
+          <div className={stageClasses} onMouseDown={handleStageMouseDown}>
+            {menuOpen && (
+              <div className="pet-menu" onMouseDown={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    openTarget(null);
+                  }}
+                >
+                  <AppWindow size={14} aria-hidden /> {t.openApp}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    toggleCollapsed();
+                  }}
+                >
+                  {collapsed ? (
+                    <ChevronUp size={14} aria-hidden />
+                  ) : (
+                    <ChevronDown size={14} aria-hidden />
+                  )}
+                  {collapsed ? t.expandCards : t.collapseCards}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    openTarget(null, true);
+                  }}
+                >
+                  <Settings size={14} aria-hidden /> {t.openSettings}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void window.orkestral['pet:set-enabled']({ enabled: false })}
+                >
+                  <EyeOff size={14} aria-hidden /> {t.hidePet}
                 </button>
               </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div className="pet-dock">
-        {/* sprite: clique abre o menu; segurar (>4px) arrasta; badge = agentes ativos */}
-        <div className={stageClasses} onMouseDown={handleStageMouseDown}>
-          {menuOpen && (
-            <div className="pet-menu" onMouseDown={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  openTarget(null);
-                }}
-              >
-                <AppWindow size={14} aria-hidden /> {t.openApp}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  toggleCollapsed();
-                }}
-              >
-                {collapsed ? (
-                  <ChevronUp size={14} aria-hidden />
-                ) : (
-                  <ChevronDown size={14} aria-hidden />
-                )}
-                {collapsed ? t.expandCards : t.collapseCards}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  openTarget(null, true);
-                }}
-              >
-                <Settings size={14} aria-hidden /> {t.openSettings}
-              </button>
-              <button
-                type="button"
-                onClick={() => void window.orkestral['pet:set-enabled']({ enabled: false })}
-              >
-                <EyeOff size={14} aria-hidden /> {t.hidePet}
-              </button>
-            </div>
-          )}
-          {activeCount > 0 && <span className="pet-badge">{activeCount}</span>}
-          <PetSprite state={visual} />
+            )}
+            {activeCount > 0 && <span className="pet-badge">{activeCount}</span>}
+            <PetSprite state={visual} />
+          </div>
         </div>
       </div>
     </div>
