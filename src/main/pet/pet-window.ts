@@ -123,8 +123,15 @@ export function createPetWindow(): void {
   petWindowRef = win;
 
   // Acima de apps em tela cheia + presente em todos os Spaces (macOS).
+  // skipTransformProcessType é OBRIGATÓRIO: sem ele o setVisibleOnAllWorkspaces
+  // troca a activation policy do app (Regular↔Accessory), e o app principal
+  // também alterna o Dock (hydrate/close) — cada flip faz o macOS ESCONDER a
+  // janela do pet segundos depois de criada ("aparece e some").
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setVisibleOnAllWorkspaces(true, {
+    visibleOnFullScreen: true,
+    skipTransformProcessType: true,
+  });
   // Click-through por padrão: o pet não pode bloquear a tela. O renderer liga a
   // interação (pet:set-ignore-mouse false) no mouseenter das áreas clicáveis —
   // forward:true mantém os mousemove chegando pro renderer detectar o hover.
@@ -133,6 +140,15 @@ export function createPetWindow(): void {
   win.on('moved', () => scheduleSaveBounds(win));
   win.on('closed', () => {
     if (petWindowRef === win) petWindowRef = null;
+  });
+  // Diagnóstico: o pet NUNCA deve sumir sozinho — se sumir, o motivo aparece
+  // no terminal do dev com o prefixo [pet].
+  win.on('hide', () => console.warn('[pet] janela escondida (hide)'));
+  win.webContents.on('render-process-gone', (_event, details) => {
+    console.error('[pet] renderer do pet morreu:', details.reason);
+  });
+  win.webContents.on('console-message', (_event, level, message) => {
+    if (level >= 2) console.warn('[pet console]', message);
   });
   win.on('ready-to-show', () => {
     // showInactive: aparecer sem ativar/roubar o foco do app atual.
