@@ -54,7 +54,12 @@ import {
 } from './services/cloud-auth';
 import { buildApplicationMenu } from './menu';
 import { fixPath } from './utils/fix-path';
-import { initPetWindowFromSettings, setPetEnabled, onPetEnabledChanged } from './pet/pet-window';
+import {
+  configurePetWindow,
+  initPetWindowFromSettings,
+  setPetEnabled,
+  onPetEnabledChanged,
+} from './pet/pet-window';
 import { SettingsRepository } from './db/repositories/settings.repo';
 
 // App empacotado aberto pelo Finder herda um PATH mínimo e não acha
@@ -380,7 +385,14 @@ app.whenReady().then(async () => {
     registerAllIpcHandlers();
     createWindow();
     setupTray();
-    // Desktop pet: recria se o usuário deixou ligado na última sessão.
+    // Desktop pet: os paths saem DESTE módulo (entry raiz, __dirname estável) —
+    // o pet-window vira chunk compartilhado com o CLI e não pode confiar no
+    // próprio import.meta.url. Configurar ANTES de qualquer criação de janela.
+    configurePetWindow({
+      preload: join(__dirname, '../preload/index.mjs'),
+      prodHtml: join(__dirname, '../renderer/pet.html'),
+    });
+    // Recria se o usuário deixou ligado na última sessão.
     initPetWindowFromSettings();
     // SMOKE do engine-v2 (gated por env): roda uma fatia viva com Forge real e loga. Dev-only.
     if (process.env.ENGINE_V2_SMOKE) {

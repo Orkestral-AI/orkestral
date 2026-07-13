@@ -1,13 +1,29 @@
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { is } from '@electron-toolkit/utils';
 import type { BrowserWindow as ElectronBrowserWindow } from 'electron';
 import { app, BrowserWindow, screen } from '../platform/electron';
 import { SettingsRepository } from '../db/repositories/settings.repo';
 import type { SettingsRecord } from '../../shared/types';
 
-// Mesmo polyfill do index.ts: o main é ESM e não tem __dirname nativo.
-const __dirname = dirname(fileURLToPath(import.meta.url));
+/**
+ * Paths do preload e do pet.html de PROD, injetados pelo index.ts no boot.
+ *
+ * NÃO usar __dirname aqui: o main tem duas entries (index + cli) e este módulo
+ * é importado pelas duas — o rollup o move pra um chunk compartilhado
+ * (out/main/chunks/), onde import.meta.url aponta pro CHUNK e `../preload`
+ * resolveria pra out/main/preload (não existe). Foi exatamente esse bug que
+ * deixava a janela do pet em branco: preload não carregava, window.orkestral
+ * não existia e o renderer morria mudo. O index.ts (entry raiz, posição
+ * estável em out/main/) é quem sabe os paths reais.
+ */
+interface PetWindowPaths {
+  preload: string;
+  prodHtml: string;
+}
+let petPaths: PetWindowPaths | null = null;
+
+export function configurePetWindow(paths: PetWindowPaths): void {
+  petPaths = paths;
+}
 
 /**
  * Desktop pet — janela flutuante always-on-top com o status dos agentes
@@ -89,7 +105,7 @@ function scheduleSaveBounds(win: ElectronBrowserWindow): void {
 }
 
 export function createPetWindow(): void {
-  if (!BrowserWindow || !screen) return; // Node puro (CLI) — no-op
+  if (!BrowserWindow || !screen || !petPaths) return; // Node puro (CLI) — no-op
   if (isPetWindowOpen()) return;
 
   const { x, y } = resolveInitialPosition();
@@ -111,7 +127,7 @@ export function createPetWindow(): void {
     // Nunca rouba foco do app onde o usuário está — cliques ainda funcionam.
     focusable: false,
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: petPaths.preload,
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: false,
@@ -158,7 +174,7 @@ export function createPetWindow(): void {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     void win.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/pet.html`);
   } else {
-    void win.loadFile(join(__dirname, '../renderer/pet.html'));
+    void win.loadFile(petPaths.prodHtml);
   }
 }
 
